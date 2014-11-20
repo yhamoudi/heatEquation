@@ -1,0 +1,95 @@
+\documentclass[a4paper,10pt]{article} % type, taille police
+
+\usepackage[utf8]{inputenc} % encodage
+\usepackage[T1]{fontenc} % encodage
+%\usepackage[french]{babel} % gestion du français
+\usepackage{amssymb} % symboles mathématiques
+\usepackage{textcomp} % flèche,  intervalle
+\usepackage{stmaryrd} % intervalle entiers
+
+\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry} % marges
+\usepackage[hidelinks]{hyperref} % sommaire interactif dans un pdf
+\usepackage[nottoc, notlof, notlot]{tocbibind} % affichage des références dans la table des matières (?)
+\usepackage{float} % placement des figures
+\usepackage[toc,page]{appendix} % ajout d'annexes
+\usepackage{amsthm} % format des déf, prop...
+\usepackage{amsmath} % matrices, ...
+\usepackage{multirow} % fusionner cellules verticalement
+
+\usepackage[french,ruled,vlined,linesnumbered]{algorithm2e} % affichage d'algorithmes
+\usepackage{tikz} % affichage de schémas
+\usepackage{graphicx} % affichage d'images
+\usepackage{url} % inclure des urls
+\usepackage{bbold} % fonction caractéristique 1
+
+\renewcommand{\appendixtocname}{Annexes} % renommage annexes
+\renewcommand{\appendixpagename}{Annexes}
+
+%\Pbrovidecommand{\SetAlgoLined}{\SetLine} % paramètre pour algorithm2e
+%\Pbrovidecommand{\DontPrintSemicolon}{\dontprintsemicolon}  % paramètre pour algorithm2e
+
+\definecolor{bgreen}{rgb}{0.30,0.70,0}
+
+\theoremstyle{definition} % pas d'italique pour le format des déf, prop...
+\newtheorem{thm}{Theorem} % \begin{thm} \end{thm}
+\newtheorem{prop}[thm]{Property}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{defi}[thm]{Definition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{rmk}[thm]{Remark}
+\newtheorem{conj}[thm]{Conjecture}
+
+\newcommand{\ddelta}{\delta^\dag}
+
+%#############################################################################################################%
+%#############################################################################################################%
+%#############################################################################################################%
+
+\title{Distributing the Heat Equation}
+\author{Tom Cornebize \and Yassine Hamoudi}
+\date{Sunday, December 07}
+
+\begin{document}
+
+\maketitle
+
+%#############################################################################################################%
+%#############################################################################################################%
+%#############################################################################################################%
+
+\section{Question 1}
+
+\begin{lem}
+  \label{nextStep}
+  $N^2$ applications of function $\delta$ are necessary to compute $X^t$ from $X^{t-1}$.
+\end{lem}
+
+\begin{proof}
+ Each cell $X^{t}_{i,j}$ needs on application of $\delta$ to be computed from $X^{t-1}_{i,j}$. There are $N^2$ cells, so $N^2$ applications of $\delta$ are needed.
+\end{proof}
+
+\begin{prop}
+  $tN^2$ applications of function $\delta$ are necessary to compute $X^t$ on \textlbrackdbl $0,N-1$ \textrbrackdbl$^2$.
+\end{prop}
+
+\begin{proof}
+ $X^t$ is obtained after $t$ applications of $\ddelta$ on $X^0$. Each application needs $N^2$ calls to $\delta$ according to lemma \ref{nextStep}. The whole computation needs $tN^2$ applications of $\delta$.
+\end{proof}
+
+%#############################################################################################################%
+
+\section{Question 2}
+
+We associate one processor per cell ($N^2$ processors are needed). Each cell is stored in its processor.
+
+
+%#############################################################################################################%
+
+
+
+%#############################################################################################################%
+%#############################################################################################################%
+%#############################################################################################################%
+
+\end{document}

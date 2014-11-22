@@ -1,46 +1,4 @@
-\documentclass[a4paper,10pt]{article} % type, taille police
-
-\usepackage[utf8]{inputenc} % encodage
-\usepackage[T1]{fontenc} % encodage
-%\usepackage[french]{babel} % gestion du français
-\usepackage{amssymb} % symboles mathématiques
-\usepackage{textcomp} % flèche,  intervalle
-\usepackage{stmaryrd} % intervalle entiers
-
-\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry} % marges
-\usepackage[hidelinks]{hyperref} % sommaire interactif dans un pdf
-\usepackage[nottoc, notlof, notlot]{tocbibind} % affichage des références dans la table des matières (?)
-\usepackage{float} % placement des figures
-\usepackage[toc,page]{appendix} % ajout d'annexes
-\usepackage{amsthm} % format des déf, prop...
-\usepackage{amsmath} % matrices, ...
-\usepackage{multirow} % fusionner cellules verticalement
-
-\usepackage[french,ruled,vlined,linesnumbered]{algorithm2e} % affichage d'algorithmes
-\usepackage{tikz} % affichage de schémas
-\usepackage{graphicx} % affichage d'images
-\usepackage{url} % inclure des urls
-\usepackage{bbold} % fonction caractéristique 1
-
-\renewcommand{\appendixtocname}{Annexes} % renommage annexes
-\renewcommand{\appendixpagename}{Annexes}
-
-%\Pbrovidecommand{\SetAlgoLined}{\SetLine} % paramètre pour algorithm2e
-%\Pbrovidecommand{\DontPrintSemicolon}{\dontprintsemicolon}  % paramètre pour algorithm2e
-
-\definecolor{bgreen}{rgb}{0.30,0.70,0}
-
-\theoremstyle{definition} % pas d'italique pour le format des déf, prop...
-\newtheorem{thm}{Theorem} % \begin{thm} \end{thm}
-\newtheorem{prop}[thm]{Property}
-\newtheorem{cor}[thm]{Corollary}
-\newtheorem{defi}[thm]{Definition}
-\newtheorem{ex}[thm]{Example}
-\newtheorem{lem}[thm]{Lemma}
-\newtheorem{rmk}[thm]{Remark}
-\newtheorem{conj}[thm]{Conjecture}
-
-\newcommand{\ddelta}{\delta^\dag}
+\input{macros}
 
 %#############################################################################################################%
 %#############################################################################################################%
@@ -48,7 +6,7 @@
 
 \title{Distributing the Heat Equation}
 \author{Tom Cornebize \and Yassine Hamoudi}
-\date{Sunday, December 07}
+\date{Sunday, December 7th 2014}
 
 \begin{document}
 
@@ -58,12 +16,14 @@
 %#############################################################################################################%
 %#############################################################################################################%
 
-\section{Question 1}
+\section{Cellular automata}
 
-\begin{lem}
+\begin{question}
+
+\begin{lemma}
   \label{nextStep}
   $N^2$ applications of function $\delta$ are necessary to compute $X^t$ from $X^{t-1}$.
-\end{lem}
+\end{lemma}
 
 \begin{proof}
  Each cell $X^{t}_{i,j}$ needs one application of $\delta$ to be computed from $X^{t-1}_{i,j}$. There are $N^2$ cells, so $N^2$ applications of $\delta$ are needed.
@@ -77,15 +37,46 @@
  $X^t$ is obtained after $t$ applications of $\ddelta$ on $X^0$. Each application needs $N^2$ calls to $\delta$ according to lemma \ref{nextStep}. The whole computation needs $tN^2$ applications of $\delta$.
 \end{proof}
 
+\end{question}
+
 %#############################################################################################################%
 
-\section{Question 2}
+\begin{question}
 
-We associate one processor per cell ($N^2$ processors are needed). Each processor $p_{i,j}$ stores at time $t$ the value of cell $X^{t}_{i,j}$.
+Let $p^2$ be the number of processors.
 
-At time $t$, each processor sends its value to its 8 neighbours and receives their values in parallel. Then each processor updates $X^{t}_{i,j}$ to $X^{t+1}_{i,j}$. 
+For the sake of simplicity, we will suppose that $p$ divides $N$. Take $n = \frac{N}{p}$.
 
-$\longrightarrow$ à changer :(, le nombre de processeurs est un paramètre donné en entrée ($< N^2$ à priori)
+We divide the grid into square zones of size $n$. Each of this zones is given to one processor, which stores the data in its own memory and performs the computation of $\delta$ for all its cells. See figure \ref{q2:draw} for an example.
+
+At each step of computation, each processor updates its sub-matrix cells using a temporary sub-matrix that replaces the old one once the computation step is finished. Indeed,  if we update the cells ``in place'', we overwrite values that are still necessary to compute other cells.
+
+The computation of $\delta$ for the cells at the edges of the zones requires communication to retrieve the current states of their neighbours in other zones.
+
+\begin{figure}
+\caption{Graphical representation of the topology for $N=6$ and $p^2=9$.}
+\label{q2:draw}
+\begin{center}
+\begin{tikzpicture}
+    \tikzstyle{case}=[draw, minimum height=1cm, minimum width=1cm, thick, fill=white, anchor=south west];
+    \tikzstyle{redcase}=[draw, minimum height=2.4cm, minimum width=2.4cm, thick, fill=none, draw=red, anchor=south west];
+
+    \foreach \x in {0,...,5} {
+        \foreach \y in {0,...,5} {
+            \node[case] at (1.2*\y,1.2*\x) {};
+        }
+    }
+    \foreach \x in {0,...,2} {
+        \foreach \y in {0,...,2} {
+            \node[redcase] at (2.4*\y-0.1,2.4*\x-0.1) {};
+        }
+    }
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+
+\end{question}
 
 %#############################################################################################################%
 

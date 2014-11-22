@@ -43,17 +43,18 @@
 
 \begin{question}
 
-Let $p$ be the number of processors.
+Let $p^2$ be the number of processors.
 
-For the sake of simplicity, we will suppose that $p$ is a perfect square (i.e. $\sqrt p \in \N$), and that $\sqrt p$ divides $N$. Take $n = \frac{N}{\sqrt p}$.
+For the sake of simplicity, we will suppose that $p$ divides $N$. Take $n = \frac{N}{p}$.
 
 We divide the grid into square zones of size $n$. Each of this zones is given to one processor, which stores the data in its own memory and performs the computation of $\delta$ for all its cells. See figure \ref{q2:draw} for an example.
 
+At each step of computation, each processor updates its sub-matrix cells using a temporary sub-matrix that replaces the old one once the computation step is finished. Indeed,  if we update the cells ``in place'', we overwrite values that are still necessary to compute other cells.
+
 The computation of $\delta$ for the cells at the edges of the zones requires communication to retrieve the current states of their neighbours in other zones.
 
-
 \begin{figure}
-\caption{Graphical representation of the topology for $N=6$ and $p=9$.}
+\caption{Graphical representation of the topology for $N=6$ and $p^2=9$.}
 \label{q2:draw}
 \begin{center}
 \begin{tikzpicture}
@@ -74,8 +75,6 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 \end{center}
 \end{figure}
 
-
-The general case can be treated in a similar fashion.
 
 \end{question}
 

@@ -1,0 +1,214 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo} %http://www.ctan.org/tex-archive/fonts/mathpazo
+\usepackage{stmaryrd} %http://www.ctan.org/pkg/stmaryrd
+\usepackage{amsmath} %http://www.ctan.org/pkg/amsmath
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+
+\usepackage{amsthm} %http://www.ctan.org/pkg/amsthm
+\usepackage{proof}
+
+\usepackage[colorlinks=true]{hyperref} %http://www.ctan.org/tex-archive/macros/latex/contrib/hyperref/
+\hypersetup{urlcolor=black,linkcolor=black}
+
+\usepackage{footmisc} %http://www.ctan.org/tex-archive/macros/latex/contrib/footmisc
+
+\usepackage{enumerate}
+\usepackage{ulem} %http://www.ctan.org/tex-archive/macros/latex/contrib/ulem
+\normalem
+\usepackage{cancel} %http://www.ctan.org/tex-archive/macros/latex/contrib/cancel
+
+\usepackage{fullpage} %http://www.ctan.org/tex-archive/macros/latex/contrib/preprint/
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\medskipamount}
+
+\usepackage{pgffor}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes.arrows, chains, positioning, automata, graphs}
+\usepackage{graphviz}
+
+\usepackage[ruled,vlined,english]{algorithm2e}
+\providecommand{\SetAlgoLined}{\SetLine}
+\providecommand{\DontPrintSemicolon}{\dontprintsemicolon}
+
+\usepackage{forest}
+\usepackage{comment} %http://www.ctan.org/tex-archive/macros/latex/contrib/comment
+\usepackage{multirow} %http://www.ctan.org/tex-archive/macros/latex/contrib/multirow
+\usepackage{diagbox} %http://www.ctan.org/tex-archive/macros/latex/contrib/diagbox
+
+\usepackage{listings} %http://www.ctan.org/tex-archive/macros/latex/contrib/listings/
+
+\usepackage{textcomp} % arrow, intervals
+\usepackage{stmaryrd} % integer intervals
+
+\lstset{numbers=left,language=Caml}
+
+\newcounter{ThComp}
+\newcounter{DefComp}
+
+\newtheorem*{fact}{Fact}
+\newtheorem*{csq}{Consequence}
+\newtheorem{thm}[ThComp]{Theorem}
+\newtheorem{theorem}[ThComp]{Theorem}
+\newtheorem{propo}[ThComp]{Proposition}
+\newtheorem{proposition}[ThComp]{Proposition}
+\newtheorem{lemma}[ThComp]{Lemma}
+\newtheorem*{corol}{Corollary}
+\newtheorem{prop}[ThComp]{Property}
+\newtheorem{property}[ThComp]{Property}
+\theoremstyle{definition}
+\newtheorem*{ex}{Example}
+\newtheorem*{exs}{Examples}
+\newtheorem{exo}{Exercise}
+\newtheorem{defi}[DefComp]{Definition}
+\newtheorem*{notation}{Notation}
+\newtheorem{definition}[DefComp]{Definition}
+\newtheorem{algo}{Algorithm}
+\theoremstyle{remark}
+\newtheorem*{Rq}{Remark}
+
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\IE}{\mathbb{E}}
+\newcommand{\IR}{\mathbb{R}}
+\newcommand{\IZ}{\mathbb{Z}}
+\newcommand{\IN}{\mathbb{N}}
+\newcommand{\IP}{\mathbb{P}}
+
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\ck}{\mathcal{K}}
+\newcommand{\cNU}{\mathcal{NU}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\F}{\mathcal{F}}
+\renewcommand{\L}{\mathcal{L}}
+\newcommand{\A}{\mathcal{A}}
+
+\newcommand{\ddelta}{\delta^\dag}
+
+\newcommand{\ens}[1]{\left\{ #1 \right\}}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\le}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+\newcommand{\cplx}[1]{\mathcal O \left( #1 \right)}
+\newcommand{\floor}[1]{\left \lfloor #1 \right \rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\brackets}[1]{\left\llbracket #1 \right\rrbracket}
+\newcommand{\donne}{\rightarrow}
+\newcommand{\gives}{\rightarrow}
+\newcommand{\dans}{\to}
+\newcommand{\booleen}{\set{0,1}^*}
+\newcommand{\eps}{\varepsilon}
+\renewcommand{\implies}{~\Rightarrow~}
+\newcommand{\tildarrow}{\rightsquigarrow}
+\newcommand{\blank}{\texttt{\char32}}
+\newcommand{\trans}[1]{\xrightarrow{#1}}
+\newcommand{\rules}[1]{\xrightarrow{#1}}
+\newcommand{\todo}[1]{\Large\textcolor{red}{#1}\normalsize}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\rainbowdash}{\vdash}
+\newcommand{\notrainbowdash}{\nvdash}
+\newcommand{\rainbowDash}{\vDash}
+\newcommand{\notrainbowDash}{\nvDash}
+\newcommand{\Rainbowdash}{\Vdash}
+\newcommand{\notRainbowdash}{\nVdash}
+\newcommand{\bottom}{\bot}
+
+%TD/TP
+\newenvironment{answer}{\color{blue}}{}
+
+
+%EvalPerf
+\newcommand{\Var}{\text{Var}}
+\newcommand{\prob}[1]{\PP\left( #1 \right)}
+\newcommand{\esp}[1]{\PP\left( #1 \right)}
+
+
+%SystDist
+\newcommand{\Receive}{\texttt{Receive~}}
+\newcommand{\Send}{\texttt{Send~}}
+
+
+%Preuves
+\newcommand{\betaeq}{=_\beta}
+\newcommand{\betared}{\vartriangleright_\beta}
+\newcommand{\parabetared}{\vartriangleright_{||\beta}}
+\newcommand{\Ackermann}{\A}
+
+
+%Cplx
+\newcommand{\Time}{\textsc{Time}}
+\newcommand{\TIME}{\textsc{Time}}
+
+\newcommand{\dtime}{\textsc{DTime}}
+\newcommand{\dTime}{\textsc{DTime}}
+\newcommand{\DTime}{\textsc{DTime}}
+
+\newcommand{\ntime}{\textsc{NTime}}
+\newcommand{\nTime}{\textsc{NTime}}
+\newcommand{\NTime}{\textsc{NTime}}
+
+\renewcommand{\P}{\textsc{P}}
+
+\newcommand{\pTime}{\textsc{PTime}}
+\newcommand{\PTime}{\textsc{PTime}}
+
+\newcommand{\NP}{\textsc{NP}}
+
+\newcommand{\npTime}{\textsc{NPTime}}
+\newcommand{\NPTime}{\textsc{NPTime}}
+
+\newcommand{\EXP}{\textsc{Exp}}
+\newcommand{\expTime}{\textsc{Exp}}
+\newcommand{\ExpTime}{\textsc{Exp}}
+\newcommand{\EXPTime}{\textsc{Exp}}
+
+\newcommand{\Space}{\textsc{Space}}
+
+\newcommand{\dSpace}{\textsc{DSpace}}
+\newcommand{\DSpace}{\textsc{DSpace}}
+
+
+\newcommand{\nSpace}{\textsc{NSpace}}\newcommand{\NSpace}{\textsc{NSpace}}
+
+\newcommand{\pSpace}{\textsc{PSpace}}
+\newcommand{\PSpace}{\textsc{PSpace}}
+
+\newcommand{\npSpace}{\textsc{NPSpace}}
+\newcommand{\NpSpace}{\textsc{NPSpace}}
+\newcommand{\NPSpace}{\textsc{NPSpace}}
+
+\newcommand{\SpaceTM}{\textsc{SpaceTM}}
+
+\newcommand{\nL}{\textsc{NL}}
+\newcommand{\NL}{\textsc{NL}}
+
+\newcommand{\LL}{\textsc{L}}
+
+\newcommand{\coNP}{co\text{-}\textsc{NP}}
+
+\newcommand{\conL}{co\text{-}\textsc{NL}}
+\newcommand{\coNL}{co\text{-}\textsc{NL}}
+
+\newcommand{\npc}{\text{\textit{NP-C}}}
+
+\newcommand{\PH}{\textsc{PH}}
+
+\newcommand{\TISP}{\textsc{TISP}}
+
+\newcommand{\Size}{\textsc{Size}}
+\newcommand{\SIZE}{\textsc{Size}}
+
+
+

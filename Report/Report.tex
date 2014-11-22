@@ -39,11 +39,39 @@
 
 \section{Question 2}
 
-We associate one processor per cell ($N^2$ processors are needed). Each processor $p_{i,j}$ stores at time $t$ the value of cell $X^{t}_{i,j}$.
+Let $p$ be the number of processors.
 
-At time $t$, each processor sends its value to its 8 neighbours and receives their values in parallel. Then each processor updates $X^{t}_{i,j}$ to $X^{t+1}_{i,j}$. 
+For the sake of simplicity, we will suppose that $p$ is a perfect square (i.e. $\sqrt p \in \N$), and that $\sqrt p$ divides $N$. Take $n = \frac{N}{\sqrt p}$.
 
-$\longrightarrow$ à changer :(, le nombre de processeurs est un paramètre donné en entrée ($< N^2$ à priori)
+We divide the grid into square zones of size $n$. Each of this zones is given to one processor, which stores the data in its own memory and performs the computation of $\delta$ for all its cells. See figure \ref{q2:draw} for an example.
+
+The computation of $\delta$ for the cells at the edges of the zones requires communication to retrieve the current states of their neighbours in other zones.
+
+
+\begin{figure}
+\caption{Graphical representation of the topology for $N=6$ and $p=9$.}
+\label{q2:draw}
+\begin{center}
+\begin{tikzpicture}
+    \tikzstyle{case}=[draw, minimum height=1cm, minimum width=1cm, thick, fill=white, anchor=south west];
+    \tikzstyle{redcase}=[draw, minimum height=2.4cm, minimum width=2.4cm, thick, fill=none, draw=red, anchor=south west];
+
+    \foreach \x in {0,...,5} {
+        \foreach \y in {0,...,5} {
+            \node[case] at (1.2*\y,1.2*\x) {};
+        }
+    }
+    \foreach \x in {0,...,2} {
+        \foreach \y in {0,...,2} {
+            \node[redcase] at (2.4*\y-0.1,2.4*\x-0.1) {};
+        }
+    }
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+
+The general case can be treated in a similar fashion.
 
 %#############################################################################################################%
 

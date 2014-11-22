@@ -6,7 +6,7 @@
 
 \title{Distributing the Heat Equation}
 \author{Tom Cornebize \and Yassine Hamoudi}
-\date{Sunday, December 7th}
+\date{Sunday, December 7th 2014}
 
 \begin{document}
 
@@ -16,7 +16,9 @@
 %#############################################################################################################%
 %#############################################################################################################%
 
-\section{Question 1}
+\section{Cellular automata}
+
+\begin{question}
 
 \begin{lemma}
   \label{nextStep}
@@ -35,9 +37,11 @@
  $X^t$ is obtained after $t$ applications of $\ddelta$ on $X^0$. Each application needs $N^2$ calls to $\delta$ according to lemma \ref{nextStep}. The whole computation needs $tN^2$ applications of $\delta$.
 \end{proof}
 
+\end{question}
+
 %#############################################################################################################%
 
-\section{Question 2}
+\begin{question}
 
 Let $p$ be the number of processors.
 
@@ -72,6 +76,8 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 
 
 The general case can be treated in a similar fashion.
+
+\end{question}
 
 %#############################################################################################################%
 

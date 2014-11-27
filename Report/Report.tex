@@ -80,8 +80,176 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 
 %#############################################################################################################%
 
+\begin{question}
+ 
+ ~\\
+\begin{algorithm}[H]
+\SetKwFunction{myrow}{My\_Proc\_Row}
+\SetKwFunction{mycol}{My\_Proc\_Col}
+\DontPrintSemicolon
+\LinesNotNumbered
+var A: array[0..n-1,0..n-1] of real\;
+var NEXT: array[0..n+1,0..n+1] of real\;
+%var bufferLeft, bufferRight, bufferTop, bufferBottom: array[0..n-1] of real\;
+%var bufferLeftCorner, bufferRightCorner, bufferTopCorner, bufferBottomCorner: real numbers\;
+$myrow \leftarrow \myrow{}$;
+$mycol \leftarrow \mycol{}$;
 
 
+\iffalse
+\BlankLine
+$voisinsAjoutes \longleftarrow []$\;
+\For{$n \in noeudsContractes$}{
+	\visibilite{n}$=1$ \tcp*{chaque noeud contracté est rendu invisible.}
+	\For{$m$ : noeud voisin de $n$}{
+		\If{$m$ n'est pas un voisin de $contracteur$}{
+		\ajouterVoisin{contracteur,m}  \tcp*{$contracteur$ et $m$ deviennent voisins}
+		\add{voisinsAjoutes, m} \tcp*{on ajoute $m$ à $voisinsAjoutes$}
+		}
+	}
+}
+\push{\stack{G}, \Fleur{contrac,noeudsContractes,voisinsAjoutes}} \tcp*{on ajoute la fleur en haut de pile}
+\Return{$G$};
+\fi
+\caption{Stencil algorithm on a toric 2D grid\label{algoq3}}
+\end{algorithm}
+~\\
+ 
+% faire les échanges modulo n (permet de traiter les bords)
+ 
+\end{question}
+
+%#############################################################################################################%
+
+\section{Average automata}
+
+\begin{question}
+ 
+ See the implementation in \texttt{average.c}.
+ 
+\end{question} 
+ 
+%#############################################################################################################%
+
+\begin{question}
+ 
+\begin{prop}
+ In the case of a \textit{p-average automaton}, $\ddelta$ is linear.
+\end{prop}
+
+\begin{proof}
+ Let $\ddelta$ be the global transformation function of a \textit{p-average automaton}. To prove that $\ddelta$ is linear, it suffices to prove that the local transformation function $\delta$ is linear:
+ 
+ \[ \delta \left( \begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array} \right) = (1-p) \cdot e+p \cdot \frac{b+d+f+h}{4}\]
+ 
+ Let consider a real $k \in \RR$, two local configurations $\begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array}$ and $\begin{array}{ | c | c | c |} \hline
+  a' & b' & c' \\ \hline
+  d' & e' & f' \\ \hline
+  g' & h' & i' \\ \hline
+ \end{array}$. We have:
+ 
+ \[\begin{split}
+ \delta \left( k \cdot \begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array} + \begin{array}{ | c | c | c |} \hline
+  a' & b' & c' \\ \hline
+  d' & e' & f' \\ \hline
+  g' & h' & i' \\ \hline
+ \end{array} \right) & = (1-p) \cdot (k \cdot e+e') + p \cdot \frac{(k \cdot b+b')+(k \cdot d+d')+(k \cdot f+f')+(k \cdot h+h')}{4}  \\
+		     & = k \cdot \left( (1-p) \cdot e+p \cdot \frac{b+d+f+h}{4} \right) + (1-p) \cdot e'+p \cdot \frac{b'+d'+f'+h'}{4} \\
+		     & = k \cdot \delta \left( \begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array} \right) + \delta \left( \begin{array}{ | c | c | c |} \hline
+  a' & b' & c' \\ \hline
+  d' & e' & f' \\ \hline
+  g' & h' & i' \\ \hline
+ \end{array} \right)      
+ \end{split}\]
+ 
+Thus $\delta$ is linear, and $\ddelta$ too.
+\end{proof}
+
+We denote $\delta^t$ the $t-th$ iterated function of $\delta$.
+
+Since $\delta$ is linear we obtain:
+
+ \[\begin{split}
+  \delta^t \left(\begin{array}{ | c | c | c |} \hline
+    a & b & c \\ \hline
+    d & e & f \\ \hline
+    g & h & i \\ \hline
+  \end{array} \right) & = (1-p)^t \cdot e + \left(\frac{p}{4}\right)^t \cdot \left(\delta^t(b) + \delta^t(d) + \delta^t(f) + \delta^t(h)\right)
+ \end{split}\]
+ 
+\end{question}
+
+%#############################################################################################################%
+
+\begin{question}
+
+ \begin{prop}
+    For a \textit{p-average automaton} with constants, $\ddelta$ can be non-linear.
+ \end{prop}
+
+ \begin{proof}
+   Let consider the following local configuration:
+   \[\begin{array}{ | c | c | c |} \hline
+    0 & 0 & 0 \\ \hline
+    0 & 1 & 0 \\ \hline
+    0 & 0 & 0 \\ \hline
+  \end{array}\]
+  
+  We assume that 1 is a constant, but 0 not. We take $p=1$.
+  
+  We have:
+ \[\begin{split}
+ \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} + \begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} \right) & = \begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 2 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} \\
+		     & = 0    
+ \end{split}\]  
+  
+  However:
+ \[\begin{split}
+ \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array}\right) + \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} \right) & = 1 + 1 = 2
+ \end{split}\]  
+  
+ This counter-example proves that $\delta$ is not linear, and so $\ddelta$ too. 
+ \end{proof}
+
+\end{question}
+
+ 
 %#############################################################################################################%
 %#############################################################################################################%
 %#############################################################################################################%

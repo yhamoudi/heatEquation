@@ -181,19 +181,61 @@ $voisinsAjoutes \longleftarrow []$\;
 Thus $\delta$ is linear, and $\ddelta$ too.
 \end{proof}
 
-We denote $\delta^t$ the $t-th$ iterated function of $\delta$.
+Let's consider a configuration $X$. For $0 \leq i,j \leq N-1$ we define the matrix $E^{i,j}$ such that $E^{i,j}_{i,j} = 1$ and $E^{i,j}_{k,l} = 0$ otherwise. We obtain : $X = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot E^{i,j}$
 
-Since $\delta$ is linear we obtain:
-
- \[\begin{split}
-  \delta^t \left(\begin{array}{ | c | c | c |} \hline
-    a & b & c \\ \hline
-    d & e & f \\ \hline
-    g & h & i \\ \hline
-  \end{array} \right) & = (1-p)^t \cdot e + \left(\frac{p}{4}\right)^t \cdot \left(\delta^t(b) + \delta^t(d) + \delta^t(f) + \delta^t(h)\right)
- \end{split}\]
+Since $\ddelta$ is linear, for all t : 
+\[ \ddeltat (X) = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat (E^{i,j})\]
  
+Moreover : 
+\begin{equation}
+ \label{expanddelta}
+ \begin{split}
+    \ddeltatt (X) & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltatt (E^{i,j}) \\
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat(\ddeltat (E^{i,j})) \\
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{i,j})
+ \end{split}
+\end{equation}
+ 
+\begin{prop}
+ Equation \ref{expanddelta} enables us to compute $\ddeltat(X)$ in time $O(log t)$.
+\end{prop}
+
+\begin{proof}
+ First of all, if $\ddeltat (E^{0,0})$ is already computed, we directly obtained by translation $\ddeltat (E^{i,j})$, for all $i,j$.
+ 
+ Let $T(t)$ the time needed to compute $\ddeltat(X)$. According to equation \ref{expanddelta} and previous remark, we have:
+ \[\begin{split}
+    T(2t) & = T(t) + O(1) \\
+	  & = O(\log t)
+   \end{split}
+\]
+ 
+ Thus, using the algorithm described by equation \ref{expanddelta}, we can compute $\ddeltat(X)$ in time $O(\log t)$. 
+\end{proof}
+
+\begin{prop}
+ The time complexity $T'(t,N)$ in terms of both $t$ and $N$is $T'(t,N) = ...$.
+\end{prop}
+
+\begin{proof}
+ 
+\end{proof}
+
+
 \end{question}
+
+%#############################################################################################################%
+
+\section{Thermal reservoirs}
+
+\begin{question}
+ 
+ \begin{ex}
+  
+ \end{ex}
+
+\end{question}
+
 
 %#############################################################################################################%
 
@@ -204,14 +246,14 @@ Since $\delta$ is linear we obtain:
  \end{prop}
 
  \begin{proof}
-   Let consider the following local configuration:
+   Let's consider the following local configuration:
    \[\begin{array}{ | c | c | c |} \hline
     0 & 0 & 0 \\ \hline
     0 & 1 & 0 \\ \hline
     0 & 0 & 0 \\ \hline
   \end{array}\]
   
-  We assume that 1 is a constant, but 0 not. We take $p=1$.
+  We assume that 1 is a constant, but 0 not. We take $p=0.5$.
   
   We have:
  \[\begin{split}
@@ -223,12 +265,12 @@ Since $\delta$ is linear we obtain:
   0 & 0 & 0 \\ \hline
   0 & 1 & 0 \\ \hline
   0 & 0 & 0 \\ \hline
- \end{array} \right) & = \begin{array}{ | c | c | c |} \hline
+ \end{array} \right) & = \delta \left(\begin{array}{ | c | c | c |} \hline
   0 & 0 & 0 \\ \hline
   0 & 2 & 0 \\ \hline
   0 & 0 & 0 \\ \hline
- \end{array} \\
-		     & = 0    
+ \end{array} \right) \\
+		     & = 0.5 \cdot 2 = 1    
  \end{split}\]  
   
   However:
@@ -244,7 +286,7 @@ Since $\delta$ is linear we obtain:
  \end{array} \right) & = 1 + 1 = 2
  \end{split}\]  
   
- This counter-example proves that $\delta$ is not linear, and so $\ddelta$ too. 
+ $\delta$ is not linear, and so $\ddelta$ too. This result proves that $\ddelta$ can be non-linear for a \textit{p-average automaton} with constants.
  \end{proof}
 
 \end{question}

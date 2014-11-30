@@ -81,21 +81,63 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 %#############################################################################################################%
 
 \begin{question}
- 
+
+We assume that $X^t$ is given as an array $PREV$ of size $(n+2) \times (n+2)$, where $X^t_{i,j}$
+is written in $PREV[i][j]$ and where $PREV[i][j]$ are dummy values for $i \in \set{0,n+1}$ or $j \in \set{0,n+1}$.
+
+We also assume that the order of messages is preserved.
+
+Let $$\delta(PREV,i,j) = \delta \left( \begin{array}{ | c | c | c |} \hline
+
+  PREV[i-1,j-1] & PREV[i-1,j] & PREV[i-1,j+1] \\ \hline
+
+  PREV[i,j-1] & PREV[i,j] & PREV[i+1,j+1] \\ \hline
+
+  PREV[i+1,j-1] & PREV[i+1,j] & PREV[i+1,j+1] \\ \hline
+
+ \end{array} \right)$$
+
  ~\\
 \begin{algorithm}[H]
-\SetKwFunction{myrow}{My\_Proc\_Row}
-\SetKwFunction{mycol}{My\_Proc\_Col}
+\SetKwFunction{sndtop}{Send\_Top}
+\SetKwFunction{sndbot}{Send\_Bottom}
+\SetKwFunction{sndleft}{Send\_Left}
+\SetKwFunction{sndright}{Send\_Right}
+\SetKwFunction{rcvtop}{Receive\_Top}
+\SetKwFunction{rcvbot}{Receive\_Bottom}
+\SetKwFunction{rcvleft}{Receive\_Left}
+\SetKwFunction{rcvright}{Receive\_Right}
 \DontPrintSemicolon
 \LinesNotNumbered
-var A: array[0..n-1,0..n-1] of real\;
-var NEXT: array[0..n+1,0..n+1] of real\;
-%var bufferLeft, bufferRight, bufferTop, bufferBottom: array[0..n-1] of real\;
-%var bufferLeftCorner, bufferRightCorner, bufferTopCorner, bufferBottomCorner: real numbers\;
-$myrow \leftarrow \myrow{}$;
-$mycol \leftarrow \mycol{}$;
-
+\KwIn{PREV: array[0..n+1,0..n+1] of real}
+\KwOut{NEXT: array[0..n+1,0..n+1] of real}
+\tcc{Columns and row}
+\For{i=1 \textbf{to} n}{
+    \sndleft{PREV[i][1]}\;
+    \sndright{PREV[i][n]}\;
+    \sndtop{PREV[1][i]}\;
+    \sndbot{PREV[n][i]}\;
+    \rcvleft{PREV[i][0]}\;
+    \rcvright{PREV[i][n+1]}\;
+    \rcvtop{PREV[0][i]}\;
+    \rcvbot{PREV[n+1][i]}\;
+}
+\tcc{Corners}
+\sndtop{PREV[1][0]}\;
+\sndtop{PREV[1][n+1]}\;
+\sndbot{PREV[n][0]}\;
+\sndbot{PREV[n][n+1]}\;
+\rcvtop{PREV[0][0]}\;
+\rcvtop{PREV[0][n+1]}\;
+\rcvbot{PREV[n+1][0]}\;
+\rcvbot{PREV[n+1][n+1]}\;
 \caption{Stencil algorithm on a toric 2D grid\label{algoq3}}
+\tcc{Computation of $\delta$}
+\For{i=1 \textbf{to} n}{
+    \For{j=1 \textbf{to} n}{
+        $NEXT[i][j] = \delta(PREV,i,j)$\;
+    }
+}
 \end{algorithm}
 ~\\
  

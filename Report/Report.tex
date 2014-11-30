@@ -95,22 +95,6 @@ var NEXT: array[0..n+1,0..n+1] of real\;
 $myrow \leftarrow \myrow{}$;
 $mycol \leftarrow \mycol{}$;
 
-
-\iffalse
-\BlankLine
-$voisinsAjoutes \longleftarrow []$\;
-\For{$n \in noeudsContractes$}{
-	\visibilite{n}$=1$ \tcp*{chaque noeud contracté est rendu invisible.}
-	\For{$m$ : noeud voisin de $n$}{
-		\If{$m$ n'est pas un voisin de $contracteur$}{
-		\ajouterVoisin{contracteur,m}  \tcp*{$contracteur$ et $m$ deviennent voisins}
-		\add{voisinsAjoutes, m} \tcp*{on ajoute $m$ à $voisinsAjoutes$}
-		}
-	}
-}
-\push{\stack{G}, \Fleur{contrac,noeudsContractes,voisinsAjoutes}} \tcp*{on ajoute la fleur en haut de pile}
-\Return{$G$};
-\fi
 \caption{Stencil algorithm on a toric 2D grid\label{algoq3}}
 \end{algorithm}
 ~\\

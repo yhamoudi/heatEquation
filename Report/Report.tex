@@ -80,8 +80,244 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 
 %#############################################################################################################%
 
+\begin{question}
+
+We assume that $X^t$ is given as an array $PREV$ of size $(n+2) \times (n+2)$, where $X^t_{i,j}$
+is written in $PREV[i][j]$ and where $PREV[i][j]$ are dummy values for $i \in \set{0,n+1}$ or $j \in \set{0,n+1}$.
+
+We also assume that the order of messages is preserved.
+
+Let $$\delta(PREV,i,j) = \delta \left( \begin{array}{ | c | c | c |} \hline
+
+  PREV[i-1,j-1] & PREV[i-1,j] & PREV[i-1,j+1] \\ \hline
+
+  PREV[i,j-1] & PREV[i,j] & PREV[i+1,j+1] \\ \hline
+
+  PREV[i+1,j-1] & PREV[i+1,j] & PREV[i+1,j+1] \\ \hline
+
+ \end{array} \right)$$
+
+ ~\\
+\begin{algorithm}[H]
+\SetKwFunction{sndtop}{Send\_Top}
+\SetKwFunction{sndbot}{Send\_Bottom}
+\SetKwFunction{sndleft}{Send\_Left}
+\SetKwFunction{sndright}{Send\_Right}
+\SetKwFunction{rcvtop}{Receive\_Top}
+\SetKwFunction{rcvbot}{Receive\_Bottom}
+\SetKwFunction{rcvleft}{Receive\_Left}
+\SetKwFunction{rcvright}{Receive\_Right}
+\DontPrintSemicolon
+\LinesNotNumbered
+\KwIn{PREV: array[0..n+1,0..n+1] of real}
+\KwOut{NEXT: array[0..n+1,0..n+1] of real}
+\tcc{Columns and row}
+\For{i=1 \textbf{to} n}{
+    \sndleft{PREV[i][1]}\;
+    \sndright{PREV[i][n]}\;
+    \sndtop{PREV[1][i]}\;
+    \sndbot{PREV[n][i]}\;
+    \rcvleft{PREV[i][0]}\;
+    \rcvright{PREV[i][n+1]}\;
+    \rcvtop{PREV[0][i]}\;
+    \rcvbot{PREV[n+1][i]}\;
+}
+\tcc{Corners}
+\sndtop{PREV[1][0]}\;
+\sndtop{PREV[1][n+1]}\;
+\sndbot{PREV[n][0]}\;
+\sndbot{PREV[n][n+1]}\;
+\rcvtop{PREV[0][0]}\;
+\rcvtop{PREV[0][n+1]}\;
+\rcvbot{PREV[n+1][0]}\;
+\rcvbot{PREV[n+1][n+1]}\;
+\caption{Stencil algorithm on a toric 2D grid\label{algoq3}}
+\tcc{Computation of $\delta$}
+\For{i=1 \textbf{to} n}{
+    \For{j=1 \textbf{to} n}{
+        $NEXT[i][j] = \delta(PREV,i,j)$\;
+    }
+}
+\end{algorithm}
+~\\
+ 
+% faire les échanges modulo n (permet de traiter les bords)
+ 
+\end{question}
+
+%#############################################################################################################%
+
+\section{Average automata}
+
+\begin{question}
+ 
+ See the implementation in \texttt{average.c}.
+ 
+\end{question} 
+ 
+%#############################################################################################################%
+
+\begin{question}
+ 
+\begin{prop}
+ In the case of a \textit{p-average automaton}, $\ddelta$ is linear.
+\end{prop}
+
+\begin{proof}
+ Let $\ddelta$ be the global transformation function of a \textit{p-average automaton}. To prove that $\ddelta$ is linear, it suffices to prove that the local transformation function $\delta$ is linear:
+ 
+ \[ \delta \left( \begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array} \right) = (1-p) \cdot e+p \cdot \frac{b+d+f+h}{4}\]
+ 
+ Let consider a real $k \in \RR$, two local configurations $\begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array}$ and $\begin{array}{ | c | c | c |} \hline
+  a' & b' & c' \\ \hline
+  d' & e' & f' \\ \hline
+  g' & h' & i' \\ \hline
+ \end{array}$. We have:
+ 
+ \[\begin{split}
+ \delta \left( k \cdot \begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array} + \begin{array}{ | c | c | c |} \hline
+  a' & b' & c' \\ \hline
+  d' & e' & f' \\ \hline
+  g' & h' & i' \\ \hline
+ \end{array} \right) & = (1-p) \cdot (k \cdot e+e') + p \cdot \frac{(k \cdot b+b')+(k \cdot d+d')+(k \cdot f+f')+(k \cdot h+h')}{4}  \\
+		     & = k \cdot \left( (1-p) \cdot e+p \cdot \frac{b+d+f+h}{4} \right) + (1-p) \cdot e'+p \cdot \frac{b'+d'+f'+h'}{4} \\
+		     & = k \cdot \delta \left( \begin{array}{ | c | c | c |} \hline
+  a & b & c \\ \hline
+  d & e & f \\ \hline
+  g & h & i \\ \hline
+ \end{array} \right) + \delta \left( \begin{array}{ | c | c | c |} \hline
+  a' & b' & c' \\ \hline
+  d' & e' & f' \\ \hline
+  g' & h' & i' \\ \hline
+ \end{array} \right)      
+ \end{split}\]
+ 
+Thus $\delta$ is linear, and $\ddelta$ too.
+\end{proof}
+
+Let's consider a configuration $X$. For $0 \leq i,j \leq N-1$ we define the matrix $E^{i,j}$ such that $E^{i,j}_{i,j} = 1$ and $E^{i,j}_{k,l} = 0$ otherwise. We obtain : $X = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot E^{i,j}$
+
+Since $\ddelta$ is linear, for all t : 
+\[ \ddeltat (X) = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat (E^{i,j})\]
+ 
+Moreover : 
+\begin{equation}
+ \label{expanddelta}
+ \begin{split}
+    \ddeltatt (X) & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltatt (E^{i,j}) \\
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat(\ddeltat (E^{i,j})) \\
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{i,j})
+ \end{split}
+\end{equation}
+ 
+\begin{prop}
+ Equation \ref{expanddelta} enables us to compute $\ddeltat(X)$ in time $O(log t)$.
+\end{prop}
+
+\begin{proof}
+ First of all, if $\ddeltat (E^{0,0})$ is already computed, we directly obtained by translation $\ddeltat (E^{i,j})$, for all $i,j$.
+ 
+ Let $T(t)$ the time needed to compute $\ddeltat(X)$. According to equation \ref{expanddelta} and previous remark, we have:
+ \[\begin{split}
+    T(2t) & = T(t) + O(1) \\
+	  & = O(\log t)
+   \end{split}
+\]
+ 
+ Thus, using the algorithm described by equation \ref{expanddelta}, we can compute $\ddeltat(X)$ in time $O(\log t)$. 
+\end{proof}
+
+\begin{prop}
+ The time complexity $T'(t,N)$ in terms of both $t$ and $N$is $T'(t,N) = ...$.
+\end{prop}
+
+\begin{proof}
+ 
+\end{proof}
 
 
+\end{question}
+
+%#############################################################################################################%
+
+\section{Thermal reservoirs}
+
+\begin{question}
+ 
+ \begin{ex}
+  
+ \end{ex}
+
+\end{question}
+
+
+%#############################################################################################################%
+
+\begin{question}
+
+ \begin{prop}
+    For a \textit{p-average automaton} with constants, $\ddelta$ can be non-linear.
+ \end{prop}
+
+ \begin{proof}
+   Let's consider the following local configuration:
+   \[\begin{array}{ | c | c | c |} \hline
+    0 & 0 & 0 \\ \hline
+    0 & 1 & 0 \\ \hline
+    0 & 0 & 0 \\ \hline
+  \end{array}\]
+  
+  We assume that 1 is a constant, but 0 not. We take $p=0.5$.
+  
+  We have:
+ \[\begin{split}
+ \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} + \begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} \right) & = \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 2 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} \right) \\
+		     & = 0.5 \cdot 2 = 1    
+ \end{split}\]  
+  
+  However:
+ \[\begin{split}
+ \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array}\right) + \delta \left(\begin{array}{ | c | c | c |} \hline
+  0 & 0 & 0 \\ \hline
+  0 & 1 & 0 \\ \hline
+  0 & 0 & 0 \\ \hline
+ \end{array} \right) & = 1 + 1 = 2
+ \end{split}\]  
+  
+ $\delta$ is not linear, and so $\ddelta$ too. This result proves that $\ddelta$ can be non-linear for a \textit{p-average automaton} with constants.
+ \end{proof}
+
+\end{question}
+
+ 
 %#############################################################################################################%
 %#############################################################################################################%
 %#############################################################################################################%

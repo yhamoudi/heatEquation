@@ -97,7 +97,12 @@ Let $$\delta(PREV,i,j) = \delta \left( \begin{array}{ | c | c | c |} \hline
 
  \end{array} \right)$$
 
- ~\\
+We consider functions \texttt{Send\_X} (resp. \texttt{Receive\_X}) for \texttt{X = Top, Bottom, Left, Right} which sends (resp. receives) to (resp. from) the corresponding processor. 
+We suppose that this function has a time cost of $1$ and a communication cost of $L+b$ where $L$ is the latency and $b$ the bandwidth.
+
+We also consider functions to send an entire row (resp. column) as one single message, to decrease the overall latency. For instance, \texttt{Send\_Bottom\_Row(n,PREV)} will send to the bottom processor the $\text{n}^{th}$ row, whereas \texttt{Send\_Top\_Row(0,PREV)} will receive from the top processor a row, which will be stored as the $\text{0}^{th}$ row.
+We suppose that this function has a time cost of $n$ and a communication cost of $L+nb$ where $L$ is the latency, $b$ the bandwidth, and $n$ the size of the row/column.
+
 \begin{algorithm}[H]
 \SetKwFunction{sndtop}{Send\_Top}
 \SetKwFunction{sndbot}{Send\_Bottom}
@@ -107,21 +112,27 @@ Let $$\delta(PREV,i,j) = \delta \left( \begin{array}{ | c | c | c |} \hline
 \SetKwFunction{rcvbot}{Receive\_Bottom}
 \SetKwFunction{rcvleft}{Receive\_Left}
 \SetKwFunction{rcvright}{Receive\_Right}
+\SetKwFunction{sndtopr}{Send\_Top\_Row}
+\SetKwFunction{sndbotr}{Send\_Bottom\_Row}
+\SetKwFunction{sndleftc}{Send\_Left\_Column}
+\SetKwFunction{sndrightc}{Send\_Right\_Column}
+\SetKwFunction{rcvtopr}{Receive\_Top\_Row}
+\SetKwFunction{rcvbotr}{Receive\_Bottom\_Row}
+\SetKwFunction{rcvleftc}{Receive\_Left\_Column}
+\SetKwFunction{rcvrightc}{Receive\_Right\_Column}
 \DontPrintSemicolon
 \LinesNotNumbered
 \KwIn{PREV: array[0..n+1,0..n+1] of real}
 \KwOut{NEXT: array[0..n+1,0..n+1] of real}
 \tcc{Columns and row}
-\For{i=1 \textbf{to} n}{
-    \sndleft{PREV[i][1]}\;
-    \sndright{PREV[i][n]}\;
-    \sndtop{PREV[1][i]}\;
-    \sndbot{PREV[n][i]}\;
-    \rcvleft{PREV[i][0]}\;
-    \rcvright{PREV[i][n+1]}\;
-    \rcvtop{PREV[0][i]}\;
-    \rcvbot{PREV[n+1][i]}\;
-}
+\sndleftc{1,PREV}\;
+\sndrightc{n,PREV}\;
+\sndtopr{1,PREV}\;
+\sndbotr{n,PREV}\;
+\rcvleftc{0,PREV}\;
+\rcvrightc{n+1,PREV}\;
+\rcvtopr{0,PREV}\;
+\rcvbotr{n+1,PREV}\;
 \tcc{Corners}
 \sndtop{PREV[1][0]}\;
 \sndtop{PREV[1][n+1]}\;
@@ -139,10 +150,12 @@ Let $$\delta(PREV,i,j) = \delta \left( \begin{array}{ | c | c | c |} \hline
     }
 }
 \end{algorithm}
-~\\
- 
-% faire les échanges modulo n (permet de traiter les bords)
- 
+
+Time complexity: $8(n+1) + n^2 \text{cost}(\delta) = 8(\frac{N}{p}+1) + \left(\frac{N}{p}\right)^2 \text{cost}(\delta) = \cplx{\left(\frac{N}{p}\right)^2}$ if $\text{cost}(\delta) = \cplx{1}$.
+
+Communication complexity (one processor): $8(L+nb+L+1) = 8(2L+\frac{N}{p}b+1)$.
+
+Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Npb+p^2)$.
 \end{question}
 
 %#############################################################################################################%

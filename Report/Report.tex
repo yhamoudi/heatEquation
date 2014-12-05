@@ -324,7 +324,7 @@ See the implementation in file \texttt{sparse.c}.
 \begin{ex}
   The following configuration $X^0$ is a fixed point with only one constant (in blue):
   
-     \[\begin{array}{ | c | c | c | c | c |} \hline
+  \[\begin{array}{ | c | c | c | c | c |} \hline
     0 & 0 & 0 & 0 & 0\\ \hline
     0 & 0 & 0 & 0 & 0\\ \hline
     0 & 0 & \cellcolor{blue!50} 0 & 0 & 0\\ \hline
@@ -338,11 +338,11 @@ See the implementation in file \texttt{sparse.c}.
 \end{defi}
 
 \begin{lemma}
- For each sequence $(X^t)$, if $\xinf$ exists then it is a fixpoint.
+ For each sequence $(X^t)$, if $\xinf$ exists then it is a fixed point.
 \end{lemma}
 
 \begin{proof}
-  By definition, for all position $X_{i,j}$ that is not a constant:
+  Let us assume that $\xinf$ exists. By definition, for all position $X_{i,j}$ that is not a constant:
    \[\begin{split}
       \lim_{t \rightarrow \infty} \ddeltat(X)_{i,j} & = \xinf_{i,j} \\
         & = \lim_{t \rightarrow \infty} \left( (1-p) \cdot \delta^{\dag^{t-1}}(X)_{i,j} + p \cdot \frac{\delta^{\dag^{t-1}}(X)_{i,j+1} + \delta^{\dag^{t-1}}(X)_{i+1,j} + \delta^{\dag^{t-1}}(X)_{i-1,j} + \delta^{\dag^{t-1}}(X)_{i,j-1}}{4} \right) \\
@@ -367,6 +367,15 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
   If we remove $X_{i,j}$ from both side of this equality and then we simplify it by $p$ ($p \neq 0$), we obtain the lemma.
 \end{proof}
 
+\begin{prop}
+  \label{twocst}
+  Let $X^0$ be a configuration with only one constant $c$. If it exists, the limit of $(X^t)$ is $c$.
+\end{prop}
+
+\begin{proof}
+
+\end{proof}
+
 \begin{lemma}
   \label{conservative}
   If $X$ is configuration without any constant then for all t the sum of all values in $\delta^{\dag^{t+1}}$ is equal to the sum of all values in $\delta^{\dag^t}$.
@@ -385,21 +394,12 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
 \end{prop}
 
 \begin{proof}
-  Let $x^{\infty} = \lim_{t \rightarrow \infty} \delta^{\dag^t}(X)_{i,j})$. The fixed point $\xinf$ (limit of $(X^t)$ verifies the following equations:
+  Let $x^{\infty} = \lim_{t \rightarrow \infty} \delta^{\dag^t}(X)_{i,j}$. The fixed point $\xinf$ (limit of $(X^t)$) verifies the following equations:
   ...
   
-  These equations are the same than in property \ref{twocst}. Thus, for all $i,j$, $\xinf_{i,j} = x^{\infty}$.
+  These equations are the same than the ones in property \ref{twocst}. Thus, for all $i,j$, $\xinf_{i,j} = x^{\infty}$.
   
-  However, according to lemma \ref{conservative} the sum of all values do not change at any step of computation. Thus, $x^{\infty}$ must be equal to the average value of all the initial cells in $X^0$.  
-\end{proof}
-
-\begin{prop}
-  \label{twocst}
-  Let $X^0$ be a configuration with only one constant $c$. If it exists, the limit of $(X^t)$ is $c$.
-\end{prop}
-
-\begin{proof}
-
+  However, according to lemma \ref{conservative} the sum of all values does not change at any step of the computation. Thus, $x^{\infty}$ must be equal to the average value of all the initial cells in $X^0$.  
 \end{proof}
 
 %#############################################################################################################%

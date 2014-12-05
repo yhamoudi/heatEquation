@@ -1,8 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+#include <mpi.h>
 #include "data.h"
 
-AverageAutomata init(int height, int width, int p) {
+#define max(a,b) (a>b ? a : b)
+#define min(a,b) (a>b ? b : a)
+
+AverageAutomata initAutomata(int width, int height, double p) {
     int i,j ;
     AverageAutomata automata = (AverageAutomata) malloc(sizeof(struct averageautomata)) ;
     automata->height = height ;
@@ -18,11 +23,38 @@ AverageAutomata init(int height, int width, int p) {
     return automata ;
 }
 
-void del(AverageAutomata automata) {
+void delAutomata(AverageAutomata automata) {
     int i ;
     for(i=0 ; i < automata->height ; i++) {
         free(automata->cells[i]) ;
     }
     free(automata->cells) ;
     free(automata) ;
+}
+
+Process initProcess(int myid, int nbproc, int width, int height, double p) {
+    Process process = (Process) malloc(sizeof(struct process)) ;
+    int b ;
+    process->myid = myid ;
+    process->nbproc = nbproc ;
+    int a = (int) sqrt((double)(process->nbproc)) ;
+    /* Compute the width and the height of the grid of processes. */
+    while(process->nbproc % a != 0)
+        a-- ;
+    b = process->nbproc/a ;
+    if(width > height) {
+        process->gridWidth = max(a,b) ;
+        process->gridHeight = min(a,b) ;
+    }
+    else {
+        process->gridWidth = min(a,b) ;
+        process->gridHeight = max(a,b) ;
+    }
+    process->automata = initAutomata(0,0,p) ;
+    return process ;
+}
+
+void delProcess(Process process) {
+    delAutomata(process->automata) ;
+    free(process) ;
 }

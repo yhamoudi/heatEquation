@@ -2,31 +2,31 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <math.h>
+#include "data.h"
 
-#define _ONLY if(myid==0)
+#define ONLY 0
 
-int numprocs, lengthgrid;
-int myid, myrow, mycol;
-int left, right, up, down ;
 
 int main(int argc, char **argv) {
-    /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
-    MPI_Init(&argc,&argv);
-    MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
-    MPI_Comm_rank(MPI_COMM_WORLD,&myid);
-    lengthgrid = (int)sqrt((double)numprocs) ;
-
-    /* Handling of non-perfect-square numbers of processors. */
-    if(lengthgrid*lengthgrid != numprocs)
-        _ONLY fprintf(stderr,"Warning: number of processes is not a perfect square.\n") ;
-    numprocs = lengthgrid*lengthgrid ;
-    if(myid >= numprocs) {
-        printf("Process %d is killed.\n",myid);
-        MPI_Finalize() ;
-        return 0 ;
+    MPI_Init(&argc,&argv) ;
+    int width, height, myid, nbproc ;
+    double p ;
+    Process process ;
+    MPI_Comm_rank(MPI_COMM_WORLD,&myid) ;
+    MPI_Comm_size(MPI_COMM_WORLD, &nbproc);
+    if(myid==ONLY) {
+        scanf("%d",&width);
+        scanf("%d",&height);
+        scanf("%lf",&p);
     }
+    MPI_Bcast(&width, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
+    MPI_Bcast(&height, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
+    MPI_Bcast(&p, 1, MPI_DOUBLE, ONLY, MPI_COMM_WORLD) ;
+    /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
+    process = initProcess(myid,nbproc,width,height,p) ;
 
-    printf("Process %d terminated normally.\n",myid);
-    MPI_Finalize();
+    printf("%d %d\n",process->gridWidth,process->gridHeight) ;
+    delProcess(process);
+    MPI_Finalize() ;
     return 0 ;
 }

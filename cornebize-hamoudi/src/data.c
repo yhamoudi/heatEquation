@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "data.h"
 
-AverageAutomata init(int height, int width, int p) {
+AverageAutomata initAutomata(int height, int width, double p) {
     int i,j ;
     AverageAutomata automata = (AverageAutomata) malloc(sizeof(struct averageautomata)) ;
     automata->height = height ;
@@ -18,7 +18,7 @@ AverageAutomata init(int height, int width, int p) {
     return automata ;
 }
 
-void del(AverageAutomata automata) {
+void delAutomata(AverageAutomata automata) {
     int i ;
     for(i=0 ; i < automata->height ; i++) {
         free(automata->cells[i]) ;

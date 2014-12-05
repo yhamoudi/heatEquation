@@ -3,17 +3,17 @@
 
 struct averageautomata {
     int height, width ;
-    int p ;
+    double p ;
     double **cells ;
 };
 
-typedef struct averageautomata *AverageAutomata;
+typedef struct averageautomata *AverageAutomata ;
 
 /* Initialisation of the automata with the given height, width and factor p. */
-AverageAutomata init(int height, int width, int p) ;
+AverageAutomata initAutomata(int height, int width, double p) ;
 
 /* Deletion of the automata. */
-void del(AverageAutomata automata) ;
+void delAutomata(AverageAutomata automata) ;
 
 
 #endif

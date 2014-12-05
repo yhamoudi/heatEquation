@@ -1,9 +1,10 @@
 EXEC=average
+FLAGS=-Wextra -Wall
 
 all : $(EXEC)
 
 % : src/%.c
-	mpicc $< -o $@
+	mpicc -lm $< -o $@ $(FLAGS)
 
 clean:
 	rm -f $(EXEC) *~ */*~

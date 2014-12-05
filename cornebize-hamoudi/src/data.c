@@ -17,3 +17,12 @@ AverageAutomata init(int height, int width, int p) {
     }
     return automata ;
 }
+
+void del(AverageAutomata automata) {
+    int i ;
+    for(i=0 ; i < automata->height ; i++) {
+        free(automata->cells[i]) ;
+    }
+    free(automata->cells) ;
+    free(automata) ;
+}

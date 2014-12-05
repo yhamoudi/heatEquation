@@ -12,5 +12,8 @@ typedef struct averageautomata *AverageAutomata;
 /* Initialisation of the automata with the given height, width and factor p. */
 AverageAutomata init(int height, int width, int p) ;
 
+/* Deletion of the automata. */
+void del(AverageAutomata automata) ;
+
 
 #endif

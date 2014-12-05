@@ -5,21 +5,19 @@
 
 #define _ONLY if(myid==0)
 
-int numprocs ;
+int numprocs, lengthgrid;
 int myid;
 
 int main(int argc, char **argv) {
-    int tmp ;
     /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
     MPI_Init(&argc,&argv);
     /* find out how big the SPMD world is */
     MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
-    tmp = (int)sqrt((double)numprocs) ;
-    tmp *= tmp ;
-    if(tmp != numprocs)
+    lengthgrid = (int)sqrt((double)numprocs) ;
+    if(lengthgrid*lengthgrid != numprocs)
         _ONLY fprintf(stderr,"Warning: number of processes is not a perfect square.\n") ;
-    numprocs = tmp ;
+    numprocs = lengthgrid*lengthgrid ;
     /* and this processes' rank is */
     if(myid >= numprocs) {
         printf("Process %d is killed.\n",myid);

@@ -173,7 +173,7 @@ Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Np
 \end{prop}
 
 \begin{proof}
- Let $\ddelta$ be the global transformation function of a \textit{p-average automaton}. To prove that $\ddelta$ is linear, it suffices to prove that the local transformation function $\delta$ is linear:
+ Let $\ddelta$ be the global transition function of a \textit{p-average automaton}. To prove that $\ddelta$ is linear, it suffices to prove that the local transition function $\delta$ is linear:
  
  \[ \delta \left( \begin{array}{ | c | c | c |} \hline
   a & b & c \\ \hline
@@ -181,7 +181,7 @@ Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Np
   g & h & i \\ \hline
  \end{array} \right) = (1-p) \cdot e+p \cdot \frac{b+d+f+h}{4}\]
  
- Let consider a real $k \in \RR$, two local configurations $\begin{array}{ | c | c | c |} \hline
+ Let consider a real $k \in \RR$ and two local configurations $\begin{array}{ | c | c | c |} \hline
   a & b & c \\ \hline
   d & e & f \\ \hline
   g & h & i \\ \hline
@@ -232,29 +232,62 @@ Moreover :
 \end{equation}
  
 \begin{prop}
- Equation \ref{expanddelta} enables us to compute $\ddeltat(X)$ in time $O(log t)$.
+ Equation \ref{expanddelta} enables us to compute $\ddeltat(X)$ in time $O(log(t))$ for a fixed $N$.
 \end{prop}
 
 \begin{proof}
  First of all, if $\ddeltat (E^{0,0})$ is already computed, we directly obtained by translation $\ddeltat (E^{i,j})$, for all $i,j$.
- 
- Let $T(t)$ the time needed to compute $\ddeltat(X)$. According to equation \ref{expanddelta} and previous remark, we have:
+
+Thus, for computing $\ddeltatt(X)$ we only need $\ddeltatt(E^{0,0})$ (time taken by the other operations does not depend on $t$). The algorithm is:
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\LinesNotNumbered
+\KwIn{t, X}
+\KwOut{$\ddeltat(X)$}
+\caption{Fast iteration on average automaton\label{algoq5}}
+$R \leftarrow E^{0,0}$; \\
+\For{i=1 \textbf{to} $\log(t) - 1$}{
+    Compute $R \leftarrow \delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$ (previous value of $R$) and equation \ref{expanddelta}
+}
+Compute and return $\ddeltat(X)$ using $E = \delta^{\dag^{t/2}}(E^{0,0})$ and equation \ref{expanddelta}
+\end{algorithm}
+
+ Let $T(t)$ be the time needed to compute $\ddeltat(X)$. According to equation \ref{expanddelta} and previous remarks, we have:
  \[\begin{split}
     T(2t) & = T(t) + O(1) \\
-	  & = O(\log t)
+	  & = O(\log(t))
    \end{split}
 \]
  
- Thus, using the algorithm described by equation \ref{expanddelta}, we can compute $\ddeltat(X)$ in time $O(\log t)$. 
+ Thus, applying the operations described in equation \ref{expanddelta}, we can compute $\ddeltat(X)$ in time $O(\log(t))$. 
 \end{proof}
 
 \begin{prop}
- The time complexity $T'(t,N)$ in terms of both $t$ and $N$is $T'(t,N) = ...$.
+ The time complexity $T_r(t,N)$ in terms of both $t$ and $N$ is $T_r(t,N) = O(\log(t) \cdot N^4)$.
 \end{prop}
 
 \begin{proof}
- 
+  Recall that it takes constant time to obtain $\ddeltat(E^{i,j})_{k,l}$ knowing $\ddeltat(E^{0,0})$.
+  
+  According to equation \ref{expanddelta} and the previous algorithm, we need to compute $\delta^{\dag^{t/2}}(E^{0,0})$ (it takes time $T_r(t/2,N)$) and then perform the four sums described in equation \ref{expanddelta} (it takes time $O(N^4)$). Finally, we have:
+  \[ T_r(t,N) = O(N^4) + T_r(t/2,N)\]
+  
+  Thus: $T_r(t,N) = O(\log(t) \cdot N^4)$.
+  
 \end{proof}
+
+\begin{prop}
+ The space complexity $T_s(t,N)$ in terms of both $t$ and $N$ is $T_s(t,N) = O(N^2)$.
+\end{prop}
+
+\begin{proof}
+ We need $N^2$ space to store the initial matrix.
+
+ When we compute $\delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$, we need to use $N^2$ to store $\delta^{\dag^{2^i}}$. However, the space used by $\delta^{\dag^{2^{i-1}}}$ can be re-use to compute $\delta^{\dag^{2^{i+1}}}$. Thus, all the computation can be done using $O(N^2)$ space.
+\end{proof}
+
+\todo{Comparer au cas général}
 
 %#############################################################################################################%
 
@@ -262,9 +295,33 @@ Moreover :
 
 \subsection*{Question 10}
  
- \begin{ex}
+\begin{ex}
+  The following configuration $X^0^$ is a fixed point with only one constant (in blue):
   
- \end{ex}
+     \[\begin{array}{ | c | c | c | c | c |} \hline
+    0 & 0 & 0 & 0 & 0\\ \hline
+    0 & 0 & 0 & 0 & 0\\ \hline
+    0 & 0 & \cellcolor{blue!50} 0 & 0 & 0\\ \hline
+    0 & 0 & 0 & 0 & 0\\ \hline
+    0 & 0 & 0 & 0 & 0\\ \hline
+  \end{array}\]
+\end{ex}
+
+\begin{prop}
+  Let $X^0$ be a configuration without any constant. If it exists, the limit of $(X^t)$ is $\overline{X^0}$ (the average value of all cells of $X^0$).
+\end{prop}
+
+\begin{proof}
+se ramener au cas suivant ?
+\end{proof}
+
+\begin{prop}
+  Let $X^0$ be a configuration with only one constant $c$. If it exists, the limit of $(X^t)$ is $c$.
+\end{prop}
+
+\begin{proof}
+
+\end{proof}
 
 %#############################################################################################################%
 

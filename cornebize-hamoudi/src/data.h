@@ -25,8 +25,10 @@ struct process {
 
 typedef struct process *Process ;
 
-Process initProcess(int myid, int width, int height) ;
+/* Initialisation of the process with the given id, height, width and factor p (values for the global automata). */
+Process initProcess(int myid, int width, int height, double p) ;
 
+/* Deletetion of the process. */
 void delProcess(Process process) ;
 
 

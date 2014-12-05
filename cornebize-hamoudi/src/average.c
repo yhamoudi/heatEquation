@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     MPI_Bcast(&height, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
     MPI_Bcast(&p, 1, MPI_DOUBLE, ONLY, MPI_COMM_WORLD) ;
     /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
-    process = initProcess(myid,width,height) ;
+    process = initProcess(myid,width,height,p) ;
 
     printf("%d %d\n",process->gridWidth,process->gridHeight) ;
 

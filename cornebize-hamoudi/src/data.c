@@ -32,11 +32,12 @@ void delAutomata(AverageAutomata automata) {
     free(automata) ;
 }
 
-Process initProcess(int myid, int width, int height) {
+Process initProcess(int myid, int width, int height, double p) {
     Process process = (Process) malloc(sizeof(struct process)) ;
     MPI_Comm_size(MPI_COMM_WORLD, &process->nbproc);
     int a = (int) sqrt((double)(process->nbproc)) ;
     int b ;
+    process->myid = myid ;
     /* Compute the width and the height of the grid of processes. */
     while(process->nbproc % a != 0)
         a-- ;
@@ -49,6 +50,7 @@ Process initProcess(int myid, int width, int height) {
         process->gridWidth = min(a,b) ;
         process->gridHeight = max(a,b) ;
     }
+    process->automata = initAutomata(0,0,p) ;
     return process ;
 }
 

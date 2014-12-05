@@ -14,4 +14,7 @@
 *.aux
 *.out
 *.backup
+*.bbl
+*.blg
+*.synctex
 average

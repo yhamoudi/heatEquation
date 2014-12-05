@@ -18,7 +18,7 @@
 
 \section{Cellular automata}
 
-\begin{question}
+\subsection*{Question 1}
 
 \begin{lemma}
   \label{nextStep}
@@ -37,11 +37,9 @@
  $X^t$ is obtained after $t$ applications of $\ddelta$ on $X^0$. Each application needs $N^2$ calls to $\delta$ according to lemma \ref{nextStep}. The whole computation needs $tN^2$ applications of $\delta$.
 \end{proof}
 
-\end{question}
-
 %#############################################################################################################%
 
-\begin{question}
+\subsection*{Question 2}
 
 Let $p^2$ be the number of processors.
 
@@ -75,12 +73,9 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 \end{center}
 \end{figure}
 
-
-\end{question}
-
 %#############################################################################################################%
 
-\begin{question}
+\subsection*{Question 3}
 
 We assume that $X^t$ is given as an array $PREV$ of size $(n+2) \times (n+2)$, where $X^t_{i,j}$
 is written in $PREV[i][j]$ and where $PREV[i][j]$ are dummy values for $i \in \set{0,n+1}$ or $j \in \set{0,n+1}$.
@@ -160,21 +155,18 @@ Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Np
 \medbreak
 
 \todo{Non-toric grid? Ring topology? Don't know a nice way to do this...}
-\end{question}
 
 %#############################################################################################################%
 
 \section{Average automata}
 
-\begin{question}
+\subsection*{Question 4}
  
  See the implementation in \texttt{average.c}.
- 
-\end{question} 
- 
+  
 %#############################################################################################################%
 
-\begin{question}
+\subsection*{Question 5}
  
 \begin{prop}
  In the case of a \textit{p-average automaton}, $\ddelta$ is linear.
@@ -264,25 +256,19 @@ Moreover :
  
 \end{proof}
 
-
-\end{question}
-
 %#############################################################################################################%
 
 \section{Thermal reservoirs}
 
-\begin{question}
+\subsection*{Question 10}
  
  \begin{ex}
   
  \end{ex}
 
-\end{question}
-
-
 %#############################################################################################################%
 
-\begin{question}
+\subsection*{Question 11}
 
  \begin{prop}
     For a \textit{p-average automaton} with constants, $\ddelta$ can be non-linear.
@@ -331,9 +317,6 @@ Moreover :
   
  $\delta$ is not linear, and so $\ddelta$ too. This result proves that $\ddelta$ can be non-linear for a \textit{p-average automaton} with constants.
  \end{proof}
-
-\end{question}
-
  
 %#############################################################################################################%
 %#############################################################################################################%

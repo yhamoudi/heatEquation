@@ -1,8 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+#include <mpi.h>
 #include "data.h"
 
-AverageAutomata initAutomata(int height, int width, double p) {
+#define max(a,b) (a>b ? a : b)
+#define min(a,b) (a>b ? b : a)
+
+AverageAutomata initAutomata(int width, int height, double p) {
     int i,j ;
     AverageAutomata automata = (AverageAutomata) malloc(sizeof(struct averageautomata)) ;
     automata->height = height ;
@@ -25,4 +30,29 @@ void delAutomata(AverageAutomata automata) {
     }
     free(automata->cells) ;
     free(automata) ;
+}
+
+Process initProcess(int myid, int width, int height) {
+    Process process = (Process) malloc(sizeof(struct process)) ;
+    MPI_Comm_size(MPI_COMM_WORLD, &process->nbproc);
+    int a = (int) sqrt((double)(process->nbproc)) ;
+    int b ;
+    /* Compute the width and the height of the grid of processes. */
+    while(process->nbproc % a != 0)
+        a-- ;
+    b = process->nbproc/a ;
+    if(width > height) {
+        process->gridWidth = max(a,b) ;
+        process->gridHeight = min(a,b) ;
+    }
+    else {
+        process->gridWidth = min(a,b) ;
+        process->gridHeight = max(a,b) ;
+    }
+    return process ;
+}
+
+void delProcess(Process process) {
+    delAutomata(process->automata) ;
+    free(process) ;
 }

@@ -3,6 +3,9 @@
 import copy
 
 def compute(grid,p,width,height):
+    """
+        Compute one step of the delta function.
+    """
     gridCopy = copy.deepcopy(grid)
     for i in range(0,height):
         for j in range(0,width):
@@ -10,6 +13,10 @@ def compute(grid,p,width,height):
                 p*(gridCopy[i-1][j]+gridCopy[(i+1)%height][j]+gridCopy[i][j-1]+gridCopy[i][(j+1)%width])/4
 
 if __name__ == "__main__":
+    """
+        Compute several iterations of the delta function on some grid, following the given specifications.
+        This module is for verification purposes.
+    """
     width = int(input(""))
     height = int(input(""))
     p = float(input(""))

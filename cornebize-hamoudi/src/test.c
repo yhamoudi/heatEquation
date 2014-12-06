@@ -89,6 +89,27 @@ void checkSetGet() {
     delProcess(proc) ;
 }
 
+void checkDelta() {
+    nbtest ++ ;
+    Process proc = initProcess(5,12,11,8,0.25,10) ;
+    proc->automata->cells[1][2].content = 1 ;
+    proc->automata->cells[2][2].content = 1 ;
+    proc->automata->cells[2][1].content = 1 ;
+    proc->automata->cells[2][3].content = 1 ;
+    proc->automata->cells[3][2].content = 1 ;
+    delta(proc->automata) ;
+    assert(proc->automata->cells[2][2].content == 1) ;
+    assert(proc->automata->cells[1][2].content == 0.8125) ;
+    assert(proc->automata->cells[2][1].content == 0.8125) ;
+    assert(proc->automata->cells[2][3].content == 0.8125) ;
+    assert(proc->automata->cells[3][2].content == 0.8125) ;
+    assert(proc->automata->cells[1][1].content == 0.125) ;
+    assert(proc->automata->cells[1][3].content == 0.125) ;
+    assert(proc->automata->cells[3][1].content == 0.125) ;
+    assert(proc->automata->cells[3][3].content == 0.125) ;
+    delProcess(proc) ;
+}
+
 int main() {
     testMiddleProcess() ;
     testLeftEdgeProcess() ;
@@ -96,6 +117,7 @@ int main() {
     testTopEdgeProcess() ;
     testDownEdgeProcess() ;
     checkSetGet() ;
+    checkDelta() ;
     printf("Passed %d tests successfully.\n",nbtest);
     return 0 ;
 }

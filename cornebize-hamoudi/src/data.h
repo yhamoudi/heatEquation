@@ -37,6 +37,9 @@ int setCellConstant(AverageAutomata automata, int i, int j, double content) ;
 /* Note that the coordinates are global coordinates. If the cell does not belong to the automata, then NaN is returned. */
 double getCell(AverageAutomata automata, int i, int j) ;
 
+/* Compute one step of the delta function. */
+void delta(AverageAutomata automata) ;
+
 struct process {
     int nbproc, gridHeight, gridWidth;
     int myid, myrow, mycol;

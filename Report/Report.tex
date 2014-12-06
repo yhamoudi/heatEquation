@@ -350,12 +350,20 @@ Using the same reasoning than in question 5, for all $0 \leq m, n \leq N-1$ we h
 
 Since $X^0$ is sparse, we assume that each processor $p$ stores the list of \textit{all} the triples $(i,j,X^0_{i,j})$ such that $X^0_{i,j} \neq 0$.
 
-The following algorithm computes $X^t$. \texttt{LocalizeCell(i,j)} returns the number of the processor storing $Z^t_{i,j}$. \texttt{LocalizeProc(p)} returns the position $(i,j)$ of the top left cell of $Z^t$ (or identically, of $X^t$) stored in processor $p$. Thus the submatrix of $Z^t$ stored in processor $p$ is:
+We use the following extra functions:
+\begin{itemize}
+ \item \texttt{LocalizeCell(i,j)}: returns the number $p$ of the processor storing $Z^t_{i,j}$ (resp. $X^t_{i,j}$).
+ \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $Z^t$ (resp. $X^t$) of the cell of position $(k,l)$ in the submatrix stored in processor $p$.
+ \item \texttt{Send(p,msg)}: send message \texttt{msg} at processor \texttt{p}.
+ \item \texttt{Receive(p,dest)}: receive message sent by processor \texttt{p} ant store it in \texttt{dest}.
+\end{itemize}
+
+For instance, the submatrix of $Z^t$ stored in processor $p$ is:
 \[
    \begin{array}{ | c | c | c |} \hline
-    Z^t_{\texttt{LocalizeProc(p)}} & \cdots & Z^t_{\texttt{LocalizeProc(p) + (0,n)}}\\ \hline
+    Z^t_{\texttt{LocalizeProc(p,0,0)}} & \cdots & Z^t_{\texttt{LocalizeProc(p,0,n-1)}}\\ \hline
     \vdots & \vdots & \vdots \\ \hline
-    Z^t_{\texttt{LocalizeProc(p) + (n,0)}} & \cdots & Z^t_{\texttt{LocalizeProc(p) + (n,n)}}\\ \hline
+    Z^t_{\texttt{LocalizeProc(p,n-1,0)}} & \cdots & Z^t_{\texttt{LocalizeProc(p,n-1,n-1)}}\\ \hline
   \end{array}
 \]
 
@@ -367,13 +375,21 @@ All processors execute the following algorithm in parallel:
     var L: list of non null cells of $X^0$, sorted in increasing order; \\
     var A: array[0..n-1][0..n-1] part of $Z^t$ handled by the processor ($Z^t$ is distributed); \\
     var B: array[0..n-1][0..n-1] part of $X^t$ handled by the processor ($X^t$ is distributed); \\ 
+    p $\leftarrow$ \texttt{My\_Num()};\\
     \For{ all $(i,j,X_{i,j})$ taken in L in increasing order}{
-        \For{l=0 \textbf{to} n-1}{
-            q
+        \For{ l=0 \textbf{to} n-1}{
+            \For{ m=0 \textbf{to} n-1}{
+                $p_s \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)+(i,j))} ; \\
+                $p_r \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)-(i,j))} ; \\
+                \texttt{Send($p_s$,A[l][m])} || \texttt{Receive($p_r$,temp)}; \\
+                B[l][m] $\leftarrow$ B[l][m] + $X_{i,j} \cdot$ temp
+            }
         }
     }
 \caption{Fast iteration on average automaton with sparse initial condition\label{algoq7}}
 \end{algorithm}
+
+Initially, all the cells of $B$ must be null. If $p_s = p$ we do not perform the \texttt{Send}. If $p_r = p$, we replace the \texttt{Receive} by $temp \leftarrow A[q_r][r_r]$.
 
 
 %#############################################################################################################%

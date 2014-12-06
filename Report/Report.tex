@@ -221,9 +221,17 @@ Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Np
 Thus $\delta$ is linear, and $\ddelta$ too.
 \end{proof}
 
-Let's consider a configuration $X$. For $0 \leq i,j \leq N-1$ we define the matrix $E^{i,j}$ such that $E^{i,j}_{i,j} = 1$ and $E^{i,j}_{k,l} = 0$ otherwise. We obtain : $X = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot E^{i,j}$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%ù
 
-Since $\ddelta$ is linear, for all t : 
+\begin{defi}
+ For $0 \leq i,j \leq N-1$ we define the matrix $E^{i,j}$ such that $E^{i,j}_{i,j} = 1$ and $E^{i,j}_{k,l} = 0$ otherwise.
+\end{defi}
+
+\begin{lemma}
+ For all $0 \leq i, j, k, l \leq N-1$, $\ddeltat(E^{i,j})_{k,l} = \ddeltat(E^{0,0})_{k-i,l-j}$ (indices are taken modulo $N$). Thus, knowing $\ddeltat(E^{0,0})$ we obtain $\ddeltat(E^{i,j})$ in constant time.
+\end{lemma}
+
+Now let's consider a configuration $X$. We have : $X = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot E^{i,j}$. Since $\ddelta$ is linear, for all t : 
 \[ \ddeltat (X) = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat (E^{i,j})\]
  
 Moreover : 
@@ -232,18 +240,34 @@ Moreover :
  \begin{split}
     \ddeltatt (X) & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltatt (E^{i,j}) \\
 		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat(\ddeltat (E^{i,j})) \\
-		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{i,j})
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{i,j}) \\
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{i,j})
  \end{split}
 \end{equation}
- 
+
+Thus, for all $0 \leq m, n \leq N-1$:
+\begin{equation}
+ \label{aveq}
+ \begin{split}
+    \ddeltatt (X)_{m,n} & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{i,j})_{m,n} \\
+                        & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{0,0})_{m-i,n-j}
+ \end{split}
+\end{equation}
+
+Especially, for $X = E^{0,0}$:
+\begin{equation}
+ \label{avequnit}
+ \begin{split}
+    \ddeltatt (E^{0,0})_{m,n} & = \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k,l} \cdot \ddeltat (E^{0,0})_{m,n}
+ \end{split}
+\end{equation}
+
 \begin{prop}
- Equation \ref{expanddelta} enables us to compute $\ddeltat(X)$ in time $O(log(t))$ for a fixed $N$.
+ Equations \ref{aveq} and \ref{avequnit} enable us to compute $\ddeltat(X)$ in time $O(log(t))$ for a fixed $N$.
 \end{prop}
 
 \begin{proof}
- First of all, if $\ddeltat (E^{0,0})$ is already computed, we directly obtained by translation $\ddeltat (E^{i,j})$, for all $i,j$.
-
-Thus, for computing $\ddeltatt(X)$ we only need $\ddeltatt(E^{0,0})$ (time taken by the other operations does not depend on $t$). The algorithm is:
+For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equation \ref{avequnit} and then apply equation \ref{aveq} to get $\ddeltatt(X)$. The algorithm is:
 
 \begin{algorithm}[H]
 \DontPrintSemicolon
@@ -253,33 +277,44 @@ Thus, for computing $\ddeltatt(X)$ we only need $\ddeltatt(E^{0,0})$ (time taken
 \caption{Fast iteration on average automaton\label{algoq5}}
 $R \leftarrow E^{0,0}$; \\
 \For{i=1 \textbf{to} $\log(t) - 1$}{
-    Compute $R \leftarrow \delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$ (previous value of $R$) and equation \ref{expanddelta}
+    Compute $R \leftarrow \delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$ (previous value of $R$) and equation \ref{avequnit}
 }
-Compute and return $\ddeltat(X)$ using $E = \delta^{\dag^{t/2}}(E^{0,0})$ and equation \ref{expanddelta}
+Compute and return $\ddeltat(X)$ using $R = \delta^{\dag^{t/2}}(E^{0,0})$ and equation \ref{aveq}
 \end{algorithm}
 
- Let $T(t)$ be the time needed to compute $\ddeltat(X)$. According to equation \ref{expanddelta} and previous remarks, we have:
+ Let $T'(t)$ be the time needed to compute $\ddeltat(E^{0,0})$. According to equation \ref{avequnit} we have:
  \[\begin{split}
-    T(2t) & = T(t) + O(1) \\
-	  & = O(\log(t))
+    T'(t) & = T'(t/2) + O(1) \\
+         & = O(\log(t))
    \end{split}
 \]
  
- Thus, applying the operations described in equation \ref{expanddelta}, we can compute $\ddeltat(X)$ in time $O(\log(t))$. 
+ Now let $T(t)$ be the time needed to compute $\ddeltat(X)$. According to equation \ref{aveq} and previous remarks, we have:
+ \[\begin{split}
+    T(t) & = T'(t/2) + O(1) \\
+	 & = O(\log(t))
+   \end{split}
+\]
+ 
+ Thus, applying the operations described in equations \ref{aveq} and \ref{avequnit}, we can compute $\ddeltat(X)$ in time $O(\log(t))$. 
 \end{proof}
 
 \begin{prop}
- The time complexity $T_r(t,N)$ in terms of both $t$ and $N$ is $T_r(t,N) = O(\log(t) \cdot N^4)$.
+ The time complexity $T_r(t,N)$ in terms of both $t$ and $N$ is $T_r(t,N) = O(N^4 \cdot \log(t) + N^6)$.
 \end{prop}
 
 \begin{proof}
-  Recall that it takes constant time to obtain $\ddeltat(E^{i,j})_{k,l}$ knowing $\ddeltat(E^{0,0})$.
+  Let $T_e(t,N)$ be the time needed to compute $\ddeltat(E^{0,0})$. According to equation \ref{avequnit} we have:
+ \[\begin{split}
+    T_e(t) & = T_e(t/2) + N^2 \cdot N^2 \text{ (there are } N^2 \text{ cells and each one needs to perform } N^2 \text{ sums)} \\
+         & = O(N^4 \cdot \log(t))
+   \end{split}
+\]  
   
-  According to equation \ref{expanddelta} and the previous algorithm, we need to compute $\delta^{\dag^{t/2}}(E^{0,0})$ (it takes time $T_r(t/2,N)$) and then perform the four sums described in equation \ref{expanddelta} (it takes time $O(N^4)$). Finally, we have:
-  \[ T_r(t,N) = O(N^4) + T_r(t/2,N)\]
+  According to equation \ref{aveq} and the previous algorithm, knowing $\delta^{\dag^{t/2}}(E^{0,0})$ it remains to perform for each cell the four sums described in equation \ref{aveq} (it takes time $O(N^4)$ per cell). Finally, we have:
+  \[ T_r(t,N) = N^2 \cdot N^4 + T_e(t/2,N)\]
   
-  Thus: $T_r(t,N) = O(\log(t) \cdot N^4)$.
-  
+  Thus: $T_r(t,N) = O(N^4 \cdot \log(t) + N^6)$.
 \end{proof}
 
 \begin{prop}
@@ -289,7 +324,7 @@ Compute and return $\ddeltat(X)$ using $E = \delta^{\dag^{t/2}}(E^{0,0})$ and eq
 \begin{proof}
  We need $N^2$ space to store the initial matrix.
 
- When we compute $\delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$, we need to use $N^2$ to store $\delta^{\dag^{2^i}}$. However, the space used by $\delta^{\dag^{2^{i-1}}}$ can be re-use to compute $\delta^{\dag^{2^{i+1}}}$. Thus, all the computation can be done using $O(N^2)$ space.
+ When we compute $\delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$, we need to use $N^2$ space to store $\delta^{\dag^{2^i}}$. However, the space used by $\delta^{\dag^{2^{i-1}}}$ can be re-use to compute $\delta^{\dag^{2^{i+1}}}$. Thus, all the computation can be done using $O(N^2)$ space.
 \end{proof}
 
 \todo{Comparer au cas général}

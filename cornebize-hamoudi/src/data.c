@@ -15,11 +15,12 @@ AverageAutomata initAutomata(int width, int height, int widthOffset, int heightO
     automata->widthOffset = widthOffset ;
     automata->heightOffset = heightOffset ;
     automata->p = p ;
-    automata->cells = (double**) malloc((height+2)*sizeof(double*)) ;
+    automata->cells = (cell**) malloc((height+2)*sizeof(cell*)) ;
     for(i=0 ; i < height+2 ; i++) {
-        automata->cells[i] = (double*) malloc((width+2)*sizeof(double)) ;
+        automata->cells[i] = (cell*) malloc((width+2)*sizeof(cell)) ;
         for(j = 0 ; j < width+2 ; j++) {
-            automata->cells[i][j] = 0 ;
+            automata->cells[i][j].content = 0 ;
+            automata->cells[i][j].type = VALUE ;
         }
     }
     return automata ;

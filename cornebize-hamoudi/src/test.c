@@ -15,7 +15,8 @@ void checkAutomata(AverageAutomata automata, int width, int height, int widthOff
     assert(automata->heightOffset == heightOffset) ;
     for(i=0 ; i < automata->height+2 ; i++) {
         for(j=0 ; j < automata->width+2 ; j++) {
-            assert(automata->cells[i][j] == 0) ;
+            assert(automata->cells[i][j].content == 0) ;
+            assert(automata->cells[i][j].type == VALUE) ;
         }
     }
 }

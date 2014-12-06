@@ -1,11 +1,16 @@
 #ifndef __DATA_H
 #define __DATA_H
 
+typedef struct{
+    double content;
+    enum type {VALUE,CONSTANT} type;
+}cell;
+
 struct averageautomata {
     int height, width ;
     int widthOffset, heightOffset ;
     double p ;
-    double **cells ;
+    cell **cells ;
 };
 
 typedef struct averageautomata *AverageAutomata ;

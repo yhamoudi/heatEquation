@@ -26,13 +26,14 @@ struct process {
     int nbproc, gridHeight, gridWidth;
     int myid, myrow, mycol;
     int left, right, up, down ;
+    int currentIter, nbIter ;
     AverageAutomata automata ;
 };
 
 typedef struct process *Process ;
 
 /* Initialisation of the process with the given id, height, width and factor p (values for the global automata). */
-Process initProcess(int myid, int nbproc, int width, int height, double p) ;
+Process initProcess(int myid, int nbproc, int width, int height, double p, int nbIter) ;
 
 /* Deletetion of the process. */
 void delProcess(Process process) ;

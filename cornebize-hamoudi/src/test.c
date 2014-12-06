@@ -21,10 +21,10 @@ void checkAutomata(AverageAutomata automata, int width, int height, int widthOff
     }
 }
 
-void checkProcess(int myid, int nbproc, int globalwidth, int globalheight, double p,\
+void checkProcess(int myid, int nbproc, int globalwidth, int globalheight, double p, int nbIter,\
                  int gridWidth, int gridHeight, int myrow, int mycol, int left, int right, int up, int down,\
                  int width, int height, int widthOffset, int heightOffset) {
-    Process proc = initProcess(myid,nbproc,globalwidth,globalheight,p) ;
+    Process proc = initProcess(myid,nbproc,globalwidth,globalheight,p,nbIter) ;
     assert(proc->gridWidth == gridWidth) ;
     assert(proc->gridHeight == gridHeight) ;
     assert(proc->myrow == myrow) ;
@@ -33,41 +33,43 @@ void checkProcess(int myid, int nbproc, int globalwidth, int globalheight, doubl
     assert(proc->right == right) ;
     assert(proc->up == up) ;
     assert(proc->down == down) ;
+    assert(proc->nbIter == nbIter) ;
+    assert(proc->currentIter == 0) ;
     checkAutomata(proc->automata,width,height,widthOffset,heightOffset,p) ;
     delProcess(proc) ;
 }
 
 void testMiddleProcess() {
     nbtest ++ ;
-    checkProcess(5,12,11,8,0.1,\
+    checkProcess(5,12,11,8,0.1,42,\
                  4,3,1,1,4,6,1,9,\
                  3,3,3,3) ;
 }
 
 void testLeftEdgeProcess() {
     nbtest ++ ;
-    checkProcess(5,12,11,8,0.1,\
+    checkProcess(5,12,11,8,0.1,42,\
                  4,3,1,1,4,6,1,9,\
                  3,3,3,3) ;
 }
 
 void testRightEdgeProcess() {
     nbtest ++ ;
-    checkProcess(7,12,11,8,0.1,\
+    checkProcess(7,12,11,8,0.1,42,\
                  4,3,1,3,6,4,3,11,\
                  2,3,9,3) ;
 }
 
 void testTopEdgeProcess() {
     nbtest ++ ;
-    checkProcess(1,12,11,8,0.1,\
+    checkProcess(1,12,11,8,0.1,42,\
                  4,3,0,1,0,2,9,5,\
                  3,3,3,0) ;
 }
 
 void testDownEdgeProcess() {
     nbtest ++ ;
-    checkProcess(9,12,11,8,0.1,\
+    checkProcess(9,12,11,8,0.1,42,\
                  4,3,2,1,8,10,5,1,\
                  3,2,3,6) ;
 }

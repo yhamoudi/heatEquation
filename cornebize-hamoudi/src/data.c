@@ -56,7 +56,7 @@ int modulo(int n, int mod) {
     left (i,j-1)     p (i,j)      right (i,j+1)
                     down (i+1,j)
 */
-Process initProcess(int myid, int nbproc, int width, int height, double p) {
+Process initProcess(int myid, int nbproc, int width, int height, double p, int nbIter) {
     Process process = (Process) malloc(sizeof(struct process)) ;
     int cellsWidth, cellsHeight, cellsWidthOffset, cellsHeightOffset ;
     process->myid = myid ;
@@ -75,6 +75,8 @@ Process initProcess(int myid, int nbproc, int width, int height, double p) {
         process->gridHeight = max(a,b) ;
     }
     /* Informations about positionning in the grid of processes. */
+    process->nbIter = nbIter ;
+    process->currentIter = 0 ;
     process->myrow = process->myid/process->gridWidth ;
     process->mycol = process->myid%process->gridWidth ;
     process->left = coord_to_id(process->myrow,modulo(process->mycol-1,process->gridWidth),process->gridWidth) ;

@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <math.h>
 #include "data.h"
 
 /* Test file without MPI. */
@@ -74,12 +75,26 @@ void testDownEdgeProcess() {
                  3,2,3,6) ;
 }
 
+void checkSetGet() {
+    nbtest ++ ;
+    Process proc = initProcess(5,12,11,8,0.1,10) ;
+    assert(setCellValue(proc->automata,1,2,0.25) == 0) ;
+    assert(setCellValue(proc->automata,10,7,0.25) == 0) ;
+    assert(setCellValue(proc->automata,4,4,0.25) == 1) ;
+    assert(getCell(proc->automata,3,5) == 0) ;
+    assert(getCell(proc->automata,4,4) == 0.25) ;
+    assert(isnan(getCell(proc->automata,1,2))) ;
+    assert(isnan(getCell(proc->automata,10,7))) ;
+    assert(proc->automata->cells[2][2].content == 0.25) ;
+}
+
 int main() {
     testMiddleProcess() ;
     testLeftEdgeProcess() ;
     testRightEdgeProcess() ;
     testTopEdgeProcess() ;
     testDownEdgeProcess() ;
+    checkSetGet() ;
     printf("Passed %d tests successfully.\n",nbtest);
     return 0 ;
 }

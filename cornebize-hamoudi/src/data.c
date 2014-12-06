@@ -35,6 +35,32 @@ void delAutomata(AverageAutomata automata) {
     free(automata) ;
 }
 
+int setCellValue(AverageAutomata automata, int i, int j, double content) {
+    if(i >= automata->heightOffset && j >= automata->widthOffset && i < automata->heightOffset + automata->height && j < automata->widthOffset + automata->width) {
+        if(automata->cells[i-automata->heightOffset+1][j-automata->widthOffset+1].type == CONSTANT)
+            return 0 ;
+        automata->cells[i-automata->heightOffset+1][j-automata->widthOffset+1].content = content ;
+        return 1 ;
+    }
+    return 0 ;
+}
+
+int setCellConstant(AverageAutomata automata, int i, int j, double content) {
+    if(i >= automata->heightOffset && j >= automata->widthOffset && i < automata->heightOffset + automata->height && j < automata->widthOffset + automata->width) {
+        automata->cells[i-automata->heightOffset+1][j-automata->widthOffset+1].content = content ;
+        automata->cells[i-automata->heightOffset+1][j-automata->widthOffset+1].type = CONSTANT ;
+        return 1 ;
+    }
+    return 0 ;
+}
+
+double getCell(AverageAutomata automata, int i, int j) {
+    if(i >= automata->heightOffset && j >= automata->widthOffset && i < automata->heightOffset + automata->height && j < automata->widthOffset + automata->width) {
+        return automata->cells[i-automata->heightOffset+1][j-automata->widthOffset+1].content ;
+    }
+    return NAN ;
+}
+
 /* Conversion from i,j coordinates to id. */
 int coord_to_id(int i, int j, int width) {
     return i*width+j ;

@@ -372,17 +372,17 @@ All processors execute the following algorithm in parallel:
 \begin{algorithm}[H]
     \DontPrintSemicolon
     \LinesNotNumbered
-    var L: list of non null cells of $X^0$, sorted in increasing order; \\
+    var L: list of non null cells of $X^0$; \\
     var A: array[0..n-1][0..n-1] part of $Z^t$ handled by the processor ($Z^t$ is distributed); \\
     var B: array[0..n-1][0..n-1] part of $X^t$ handled by the processor ($X^t$ is distributed); \\ 
     p $\leftarrow$ \texttt{My\_Num()};\\
-    \For{ all $(i,j,X_{i,j})$ taken in L in increasing order}{
+    \For{ all $(i,j,X^0_{i,j})$ taken in L}{
         \For{ l=0 \textbf{to} n-1}{
             \For{ m=0 \textbf{to} n-1}{
                 $p_s \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)+(i,j))} ; \\
                 $p_r \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)-(i,j))} ; \\
                 \texttt{Send($p_s$,A[l][m])} || \texttt{Receive($p_r$,temp)}; \\
-                B[l][m] $\leftarrow$ B[l][m] + $X_{i,j} \cdot$ temp
+                B[l][m] $\leftarrow$ B[l][m] + $X^0_{i,j} \cdot$ temp
             }
         }
     }

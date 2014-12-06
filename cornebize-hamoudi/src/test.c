@@ -38,37 +38,37 @@ void checkProcess(int myid, int nbproc, int globalwidth, int globalheight, doubl
 
 void testMiddleProcess() {
     nbtest ++ ;
-    checkProcess(5,12,11,9,0.1,\
+    checkProcess(5,12,11,8,0.1,\
                  4,3,1,1,4,6,1,9,\
                  3,3,3,3) ;
 }
 
 void testLeftEdgeProcess() {
     nbtest ++ ;
-    checkProcess(5,12,11,9,0.1,\
+    checkProcess(5,12,11,8,0.1,\
                  4,3,1,1,4,6,1,9,\
                  3,3,3,3) ;
 }
 
 void testRightEdgeProcess() {
     nbtest ++ ;
-    checkProcess(7,12,11,9,0.1,\
+    checkProcess(7,12,11,8,0.1,\
                  4,3,1,3,6,4,3,11,\
                  2,3,9,3) ;
 }
 
 void testTopEdgeProcess() {
     nbtest ++ ;
-    checkProcess(1,12,11,9,0.1,\
+    checkProcess(1,12,11,8,0.1,\
                  4,3,0,1,0,2,9,5,\
                  3,3,3,0) ;
 }
 
 void testDownEdgeProcess() {
     nbtest ++ ;
-    checkProcess(9,12,11,9,0.1,\
+    checkProcess(9,12,11,8,0.1,\
                  4,3,2,1,8,10,5,1,\
-                 3,3,3,6) ;
+                 3,2,3,6) ;
 }
 
 int main() {

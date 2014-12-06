@@ -45,7 +45,7 @@
 
 Let $p^2$ be the number of processors.
 
-For the sake of simplicity, we will suppose that $p$ divides $N$. Take $n = \frac{N}{p}$.
+For the sake of simplicity, \underline{we will assume throughout the homework} that $p$ divides $N$. Take $n = \frac{N}{p}$.
 
 We divide the grid into square zones of size $n$. Each of this zones is given to one processor, which stores the data in its own memory and performs the computation of $\delta$ for all its cells. See figure \ref{q2:draw} for an example.
 
@@ -352,10 +352,10 @@ Since $X^0$ is sparse, we assume that each processor $p$ stores the list of \tex
 
 We use the following extra functions:
 \begin{itemize}
- \item \texttt{LocalizeCell(i,j)}: returns the number $p$ of the processor storing $Z^t_{i,j}$ (resp. $X^t_{i,j}$).
+ \item \texttt{LocalizeCell(i,j)}: returns the triple $(p,k,l)$ where $p$ is the processor storing $Z^t_{i,j}$ (resp. $X^t_{i,j}$) at position $(k,l)$ in its submatrix.
  \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $Z^t$ (resp. $X^t$) of the cell of position $(k,l)$ in the submatrix stored in processor $p$.
- \item \texttt{Send(p,msg)}: send message \texttt{msg} at processor \texttt{p}.
- \item \texttt{Receive(p,dest)}: receive message sent by processor \texttt{p} ant store it in \texttt{dest}.
+ \item \texttt{Send(p,t,msg)}: send message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
+ \item \texttt{Receive(p,t,dest)}: receive message of tag \texttt{t} sent by processor \texttt{p} and store it in \texttt{dest}.
 \end{itemize}
 
 For instance, the submatrix of $Z^t$ stored in processor $p$ is:
@@ -372,25 +372,56 @@ All processors execute the following algorithm in parallel:
 \begin{algorithm}[H]
     \DontPrintSemicolon
     \LinesNotNumbered
-    var L: list of non null cells of $X^0$; \\
+    var L: list of non null cells of $X^0$, sorted in increasing order; \\
     var A: array[0..n-1][0..n-1] part of $Z^t$ handled by the processor ($Z^t$ is distributed); \\
     var B: array[0..n-1][0..n-1] part of $X^t$ handled by the processor ($X^t$ is distributed); \\ 
     p $\leftarrow$ \texttt{My\_Num()};\\
-    \For{ all $(i,j,X^0_{i,j})$ taken in L}{
+    \For{ all $(i,j,X^0_{i,j})$ taken in L in increasing order}{
         \For{ l=0 \textbf{to} n-1}{
             \For{ m=0 \textbf{to} n-1}{
-                $p_s \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)+(i,j))} ; \\
-                $p_r \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)-(i,j))} ; \\
-                \texttt{Send($p_s$,A[l][m])} || \texttt{Receive($p_r$,temp)}; \\
-                B[l][m] $\leftarrow$ B[l][m] + $X^0_{i,j} \cdot$ temp
+                $(p_s,q_s,r_s) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)+(i,j))} ; \\
+                $(p_r,q_r,r_r) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)-(i,j))} ; \\
+                \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} || \texttt{Receive($p_r$,$(l,m)$,temp)}; \\
+                \texttt{B[l][m] $\leftarrow$ B[l][m] + $X^0_{i,j} \cdot$ temp}
             }
         }
     }
 \caption{Fast iteration on average automaton with sparse initial condition\label{algoq7}}
 \end{algorithm}
 
-Initially, all the cells of $B$ must be null. If $p_s = p$ we do not perform the \texttt{Send}. If $p_r = p$, we replace the \texttt{Receive} by $temp \leftarrow A[q_r][r_r]$.
+Initially, all the cells of $B$ must be null.
 
+\begin{prop}
+ The time complexity $T_t(N,|X_0|)$ of algorithm \ref{algoq7} is $T_t(N,|X_0|) = 3 \cdot |X_0| \cdot \frac{N^2}{p^2}$ (we do not count communication time).
+\end{prop}
+
+\begin{proof}
+ We recall that $n = \frac{N}{p}$.
+ 
+ Each processor performs 3 loops \texttt{for}, with three operations at each iteration. Thus, $T_t(N,|X_0|) = 3 \cdot |X_0| \cdot n \cdot n = 3 \cdot |X_0| \cdot \frac{N^2}{p^2}$.
+\end{proof}
+
+\begin{prop}
+ The space complexity $T_s(N,|X_0|)$ of algorithm \ref{algoq7} is $T_s(N,|X_0|) = N^2 + p^2 \cdot |X_0|$.
+\end{prop}
+
+\begin{proof}
+ Each processor stores two arrays of size $n^2$ and one list of size $|X_0|$. There are $p^2$ processors. We obtain:
+ \[
+    \begin{split}
+        T_s(N,|X_0|) & = p^2 \cdot (n^2 + |X_0|) \\
+                     & = N^2 + p^2 \cdot |X_0|
+    \end{split}
+ \] 
+\end{proof}
+
+\begin{prop}
+ The communication time complexity $T_c(N,|X_0|)$ of algorithm \ref{algoq7} is $T_c(N,|X_0|) = 2 \cdot c \cdot |X_0| \cdot \frac{N^2}{p^2}$.
+\end{prop}
+
+\begin{proof}
+ Each processor performs 3 loops \texttt{for}, with two communication operations at each iteration. Thus, $T_t(N,|X_0|) = 2 \cdot c \cdot |X_0| \cdot n \cdot n = 2 \cdot c \cdot |X_0| \cdot \frac{N^2}{p^2}$. 
+\end{proof}
 
 %#############################################################################################################%
 

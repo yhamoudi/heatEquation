@@ -240,8 +240,8 @@ Moreover :
  \begin{split}
     \ddeltatt (X) & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltatt (E^{i,j}) \\
 		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat(\ddeltat (E^{i,j})) \\
-		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{i,j}) \\
-		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{i,j})
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{k,l}) \\
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{k,l})
  \end{split}
 \end{equation}
 
@@ -249,8 +249,8 @@ Thus, for all $0 \leq m, n \leq N-1$:
 \begin{equation}
  \label{aveq}
  \begin{split}
-    \ddeltatt (X)_{m,n} & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{i,j})_{m,n} \\
-                        & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{0,0})_{m-i,n-j}
+    \ddeltatt (X)_{m,n} & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{k,l})_{m,n} \\
+                        & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{0,0})_{m-k,n-l}
  \end{split}
 \end{equation}
 
@@ -258,7 +258,7 @@ Especially, for $X = E^{0,0}$:
 \begin{equation}
  \label{avequnit}
  \begin{split}
-    \ddeltatt (E^{0,0})_{m,n} & = \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k,l} \cdot \ddeltat (E^{0,0})_{m,n}
+    \ddeltatt (E^{0,0})_{m,n} & = \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k,l} \cdot \ddeltat (E^{0,0})_{m-k,n-l}
  \end{split}
 \end{equation}
 

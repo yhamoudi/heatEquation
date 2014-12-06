@@ -16,4 +16,4 @@ test : obj/data.o obj/test.o
 	mpicc -lm $^ -o $@
 
 clean:
-	rm -rf obj $(EXEC) *~ */*~
+	rm -rf obj $(EXEC) *~ */*~ average.log.*

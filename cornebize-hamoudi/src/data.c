@@ -35,6 +35,12 @@ void delAutomata(AverageAutomata automata) {
     free(automata) ;
 }
 
+void printAutomata(AverageAutomata automata, FILE *f) {
+    fprintf(f,"## AUTOMATA ##\n") ;
+    fprintf(f,"(height,width):             (%d\t,%d)\n",automata->height,automata->width) ;
+    fprintf(f,"(heightOffset,widthOffset): (%d\t,%d)\n",automata->heightOffset,automata->widthOffset) ;
+}
+
 int setCellValue(AverageAutomata automata, int i, int j, double content) {
     if(i >= automata->heightOffset && j >= automata->widthOffset && i < automata->heightOffset + automata->height && j < automata->widthOffset + automata->width) {
         if(automata->cells[i-automata->heightOffset+1][j-automata->widthOffset+1].type == CONSTANT)
@@ -155,4 +161,12 @@ Process initProcess(int myid, int nbproc, int width, int height, double p, int n
 void delProcess(Process process) {
     delAutomata(process->automata) ;
     free(process) ;
+}
+
+void printProcess(Process process, FILE *f) {
+    printAutomata(process->automata, f) ;
+    fprintf(f,"\n## PROCESS ##\n") ;
+    fprintf(f,"(gridHeight,gridWidth):     (%d\t,%d)\n",process->gridHeight,process->gridWidth) ;
+    fprintf(f,"(myid,myrow,mycol):         (%d\t,%d\t,%d)\n",process->myid,process->myrow,process->mycol) ;
+    fprintf(f,"(left,right,up,down):       (%d\t,%d\t,%d\t,%d)\n",process->left,process->right,process->up,process->down) ;
 }

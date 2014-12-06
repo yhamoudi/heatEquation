@@ -10,7 +10,6 @@
 void compute(Process process, double **buff) {
     int i ;
     MPI_Status stat;
-    fprintf(stderr,"Process %d is computing...\n",process->myid) ;
     /* Copy of the columns 1 and n in the buffers. */
     for(i = 1 ; i <= process->automata->height ; i++) {
         buff[0][i-1] = process->automata->cells[i][1].content ;
@@ -71,8 +70,7 @@ void io(Process process) {
         if(buffio[0] == -1)
             break ;
         if(buffio[0] == 0) {
-            if(setCellValue(process->automata,buffio[1],buffio[2],content))
-                fprintf(stderr,"Process %d: set cell (%d,%d) to value %lf\n",process->myid,buffio[1],buffio[2],content) ;
+            setCellValue(process->automata,buffio[1],buffio[2],content) ;
         }
         if(buffio[0] == 2) {
             while(process->currentIter < process->nbIter) {
@@ -95,11 +93,15 @@ void io(Process process) {
 
 int main(int argc, char **argv) {
     MPI_Init(&argc,&argv) ;
+    char filename[100] = "average.log." ;
+    FILE *f ;
     int width, height, myid, nbproc, nbiter ;
     double p ;
     Process process ;
     MPI_Comm_rank(MPI_COMM_WORLD,&myid) ;
     MPI_Comm_size(MPI_COMM_WORLD, &nbproc);
+    sprintf(&filename[sizeof("average.log.")-1], "%d", myid);
+    f = fopen(filename,"w");
     if(myid==ONLY) {
         scanf("%d",&width);
         scanf("%d",&height);
@@ -112,6 +114,8 @@ int main(int argc, char **argv) {
     MPI_Bcast(&nbiter, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
     /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
     process = initProcess(myid,nbproc,width,height,p,nbiter) ;
+    printProcess(process,f);
+    fclose(f);
     io(process);
     delProcess(process);
     MPI_Finalize() ;

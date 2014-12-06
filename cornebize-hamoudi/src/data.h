@@ -21,6 +21,8 @@ AverageAutomata initAutomata(int width, int height, int widthOffset, int heightO
 /* Deletion of the automata. */
 void delAutomata(AverageAutomata automata) ;
 
+void printAutomata(AverageAutomata automata, FILE *f) ;
+
 /* Set the given cell to a value, with the given content. */
 /* Note that the coordinates are global coordinates. If the cell does not belong to the automata, then nothing is done. */
 /* If the cell was a constant, does not change it. */
@@ -55,6 +57,8 @@ Process initProcess(int myid, int nbproc, int width, int height, double p, int n
 
 /* Deletetion of the process. */
 void delProcess(Process process) ;
+
+void printProcess(Process process, FILE *f) ;
 
 
 #endif

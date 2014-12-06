@@ -7,14 +7,53 @@
 #define ONLY 0
 #define TAG 0
 
-void compute(Process process) {
+void compute(Process process, double **buff) {
+    int i ;
+    MPI_Status stat;
     fprintf(stderr,"Process %d is computing...\n",process->myid) ;
-    process->nbIter = process->currentIter ;
+    /* Copy of the columns 1 and n in the buffers. */
+    for(i = 1 ; i <= process->automata->height ; i++) {
+        buff[0][i-1] = process->automata->cells[i][1].content ;
+        buff[1][i-1] = process->automata->cells[i][process->automata->width].content ;
+    }
+    /* Sending of the columns. */
+    MPI_Send(buff[0], process->automata->height, MPI_DOUBLE, process->left, TAG, MPI_COMM_WORLD);
+    MPI_Send(buff[1], process->automata->height, MPI_DOUBLE, process->right, TAG, MPI_COMM_WORLD);
+    /* Receiving of the columns. */
+    MPI_Recv(buff[2], process->automata->height, MPI_DOUBLE, process->left, TAG, MPI_COMM_WORLD,&stat);
+    MPI_Recv(buff[3], process->automata->height, MPI_DOUBLE, process->right, TAG, MPI_COMM_WORLD,&stat);
+    /* Copy of the buffers in the columns 0 and n+1. */
+    for(i = 1 ; i <= process->automata->height ; i++) {
+        process->automata->cells[i][0].content = buff[2][i-1] ;
+        process->automata->cells[i][process->automata->width+1].content = buff[3][i-1] ;
+    }
+    /* Copy of the rows 1 and n in the buffers. */
+    for(i = 1 ; i <= process->automata->width ; i++) {
+        buff[4][i-1] = process->automata->cells[1][i].content ;
+        buff[5][i-1] = process->automata->cells[process->automata->height][i].content ;
+    }
+    /* Sending of the columns. */
+    MPI_Send(buff[4], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD);
+    MPI_Send(buff[5], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD);
+    /* Receiving of the columns. */
+    MPI_Recv(buff[6], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD,&stat);
+    MPI_Recv(buff[7], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD,&stat);
+    /* Copy of the buffers in the columns 0 and n+1. */
+    for(i = 1 ; i <= process->automata->height ; i++) {
+        process->automata->cells[0][i].content = buff[6][i-1] ;
+        process->automata->cells[process->automata->height+1][i].content = buff[7][i-1] ;
+    }
+    /* Computation of the transition function. */
+    delta(process->automata) ;
+    process->currentIter ++ ;
 }
 
 void io(Process process) {
     int i, buffio[3] = {0,0,0} ;
     double content ;
+    double *buffcolumns[8] ; /* buffers for messages */
+    for(i=0 ; i < 8 ; i++)
+        buffcolumns[i] = (double*) malloc(process->automata->height*sizeof(double)) ;
     MPI_Status stat;
     while(1) {
         if(process->myid == ONLY) {
@@ -36,8 +75,8 @@ void io(Process process) {
                 fprintf(stderr,"Process %d: set cell (%d,%d) to value %lf\n",process->myid,buffio[1],buffio[2],content) ;
         }
         if(buffio[0] == 2) {
-            while(process->nbIter > process->currentIter) {
-                compute(process) ;
+            while(process->currentIter < process->nbIter) {
+                compute(process, buffcolumns) ;
             }
             content = getCell(process->automata,buffio[1],buffio[2]) ;
             if(!isnan(content) && !process->myid == ONLY) {
@@ -50,6 +89,8 @@ void io(Process process) {
                 printf("%lf\n",content) ;
         }
     }
+    for(i=0 ; i < 8 ; i++)
+        free(buffcolumns[i]) ;
 }
 
 int main(int argc, char **argv) {

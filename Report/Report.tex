@@ -337,6 +337,17 @@ Compute and return $\ddeltat(X)$ using $R = \delta^{\dag^{t/2}}(E^{0,0})$ and eq
 
 \subsection*{Question 7}
 
+Using the same reasoning than in question 5, for all $0 \leq m, n \leq N-1$ we have:
+\begin{equation}
+ \label{qsevenrel}
+ \begin{split}
+    X^t_{m,n} & = \ddeltat (X^0)_{m,n} \\
+              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot \ddeltat (E^{i,j})_{m,n} \\
+              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot \ddeltat (E^{0,0})_{m-i,n-i} \\
+              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot Z^t_{m-i,n-i} \\
+ \end{split}
+\end{equation}
+
 %#############################################################################################################%
 
 \subsection*{Question 8}

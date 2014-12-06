@@ -86,6 +86,7 @@ void checkSetGet() {
     assert(isnan(getCell(proc->automata,1,2))) ;
     assert(isnan(getCell(proc->automata,10,7))) ;
     assert(proc->automata->cells[2][2].content == 0.25) ;
+    delProcess(proc) ;
 }
 
 int main() {

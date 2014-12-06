@@ -25,7 +25,9 @@ int main(int argc, char **argv) {
     /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
     process = initProcess(myid,nbproc,width,height,p) ;
 
-    printf("%d %d\n",process->gridWidth,process->gridHeight) ;
+    if(process->myid==ONLY)
+        printf("# %d %d\n",process->gridHeight,process->gridWidth) ;
+    printf("    %d: %d %d\n",process->myid,process->myrow,process->mycol) ;
     delProcess(process);
     MPI_Finalize() ;
     return 0 ;

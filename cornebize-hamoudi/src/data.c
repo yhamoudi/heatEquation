@@ -32,6 +32,27 @@ void delAutomata(AverageAutomata automata) {
     free(automata) ;
 }
 
+/* Conversion from i,j coordinates to id. */
+int coord_to_id(int i, int j, int width) {
+    return i*width+j ;
+}
+
+/* True math modulo ( -1%5 == -1 in C) */
+/* We suppose that -mod <= n <= 2mod */
+int modulo(int n, int mod) {
+    if(n<0)
+        return n+mod ;
+    if(n>=mod)
+        return n-mod ;
+    return n ;
+}
+
+/*
+    Orientation of the processes grid:
+                    top (i-1,j)
+    left (i,j-1)     p (i,j)      right (i,j+1)
+                    down (i+1,j)
+*/
 Process initProcess(int myid, int nbproc, int width, int height, double p) {
     Process process = (Process) malloc(sizeof(struct process)) ;
     int b ;
@@ -50,6 +71,12 @@ Process initProcess(int myid, int nbproc, int width, int height, double p) {
         process->gridWidth = min(a,b) ;
         process->gridHeight = max(a,b) ;
     }
+    process->myrow = process->myid/process->gridHeight ;
+    process->mycol = process->myid%process->gridWidth ;
+    process->left = coord_to_id(process->myrow,modulo(process->mycol-1,process->gridWidth),process->gridWidth) ;
+    process->right = coord_to_id(process->myrow,modulo(process->mycol+1,process->gridWidth),process->gridWidth) ;
+    process->down = coord_to_id(modulo(process->myrow+1,process->gridWidth),process->mycol,process->gridWidth) ;
+    process->up = coord_to_id(modulo(process->myrow-1,process->gridWidth),process->mycol,process->gridWidth) ;
     process->automata = initAutomata(0,0,p) ;
     return process ;
 }

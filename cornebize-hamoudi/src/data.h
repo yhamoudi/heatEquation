@@ -3,14 +3,15 @@
 
 struct averageautomata {
     int height, width ;
+    int widthOffset, heightOffset ;
     double p ;
     double **cells ;
 };
 
 typedef struct averageautomata *AverageAutomata ;
 
-/* Initialisation of the automata with the given height, width and factor p. */
-AverageAutomata initAutomata(int width, int height, double p) ;
+/* Initialisation of the automata with the given height, width, offsets and factor p. */
+AverageAutomata initAutomata(int width, int height, int widthOffset, int heightOffset, double p) ;
 
 /* Deletion of the automata. */
 void delAutomata(AverageAutomata automata) ;

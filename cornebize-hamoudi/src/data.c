@@ -7,16 +7,18 @@
 #define max(a,b) (a>b ? a : b)
 #define min(a,b) (a>b ? b : a)
 
-AverageAutomata initAutomata(int width, int height, double p) {
+AverageAutomata initAutomata(int width, int height, int widthOffset, int heightOffset, double p) {
     int i,j ;
     AverageAutomata automata = (AverageAutomata) malloc(sizeof(struct averageautomata)) ;
     automata->height = height ;
     automata->width = width ;
+    automata->widthOffset = widthOffset ;
+    automata->heightOffset = heightOffset ;
     automata->p = p ;
-    automata->cells = (double**) malloc(height*sizeof(double*)) ;
-    for(i=0 ; i < height ; i++) {
-        automata->cells[i] = (double*) malloc(width*sizeof(double)) ;
-        for(j = 0 ; j < width ; j++) {
+    automata->cells = (double**) malloc((height+2)*sizeof(double*)) ;
+    for(i=0 ; i < height+2 ; i++) {
+        automata->cells[i] = (double*) malloc((width+2)*sizeof(double)) ;
+        for(j = 0 ; j < width+2 ; j++) {
             automata->cells[i][j] = 0 ;
         }
     }
@@ -25,7 +27,7 @@ AverageAutomata initAutomata(int width, int height, double p) {
 
 void delAutomata(AverageAutomata automata) {
     int i ;
-    for(i=0 ; i < automata->height ; i++) {
+    for(i=0 ; i < automata->height+2 ; i++) {
         free(automata->cells[i]) ;
     }
     free(automata->cells) ;
@@ -55,10 +57,10 @@ int modulo(int n, int mod) {
 */
 Process initProcess(int myid, int nbproc, int width, int height, double p) {
     Process process = (Process) malloc(sizeof(struct process)) ;
-    int b ;
+    int cellsWidth, cellsHeight, cellsWidthOffset, cellsHeightOffset ;
     process->myid = myid ;
     process->nbproc = nbproc ;
-    int a = (int) sqrt((double)(process->nbproc)) ;
+    int a = (int) floor(sqrt((double)(process->nbproc))), b ;
     /* Compute the width and the height of the grid of processes. */
     while(process->nbproc % a != 0)
         a-- ;
@@ -71,13 +73,21 @@ Process initProcess(int myid, int nbproc, int width, int height, double p) {
         process->gridWidth = min(a,b) ;
         process->gridHeight = max(a,b) ;
     }
-    process->myrow = process->myid/process->gridHeight ;
+    /* Informations about positionning in the grid of processes. */
+    process->myrow = process->myid/process->gridWidth ;
     process->mycol = process->myid%process->gridWidth ;
     process->left = coord_to_id(process->myrow,modulo(process->mycol-1,process->gridWidth),process->gridWidth) ;
     process->right = coord_to_id(process->myrow,modulo(process->mycol+1,process->gridWidth),process->gridWidth) ;
-    process->down = coord_to_id(modulo(process->myrow+1,process->gridWidth),process->mycol,process->gridWidth) ;
-    process->up = coord_to_id(modulo(process->myrow-1,process->gridWidth),process->mycol,process->gridWidth) ;
-    process->automata = initAutomata(0,0,p) ;
+    process->down = coord_to_id(modulo(process->myrow+1,process->gridHeight),process->mycol,process->gridWidth) ;
+    process->up = coord_to_id(modulo(process->myrow-1,process->gridHeight),process->mycol,process->gridWidth) ;
+    /* Informations about the part of the automata to handle. */
+    cellsWidth = (int)ceil((double)width/(double)process->gridWidth) ;
+    cellsHeight = (int)ceil((double)height/(double)process->gridHeight) ;
+    cellsWidthOffset = cellsWidth*process->mycol ;
+    cellsHeightOffset = cellsHeight*process->myrow ;
+    cellsWidth = min(cellsWidth,width-cellsWidthOffset) ;
+    cellsHeight = min(cellsHeight,height-cellsHeightOffset) ;
+    process->automata = initAutomata(cellsWidth,cellsHeight,cellsWidthOffset,cellsHeightOffset,p) ;
     return process ;
 }
 

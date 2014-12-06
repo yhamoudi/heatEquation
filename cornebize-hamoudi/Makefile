@@ -1,5 +1,5 @@
 EXEC=average test
-FLAGS=-Wextra -Wall
+FLAGS=-Wextra -Wall -g
 
 all : setup $(EXEC)
 

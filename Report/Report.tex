@@ -241,7 +241,7 @@ Moreover :
     \ddeltatt (X) & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltatt (E^{i,j}) \\
 		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \cdot \ddeltat(\ddeltat (E^{i,j})) \\
 		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{i,j})_{k,l} \cdot \ddeltat (E^{k,l}) \\
-		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{k,l})
+		  & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-j} \cdot \ddeltat (E^{k,l})
  \end{split}
 \end{equation}
 
@@ -249,8 +249,8 @@ Thus, for all $0 \leq m, n \leq N-1$:
 \begin{equation}
  \label{aveq}
  \begin{split}
-    \ddeltatt (X)_{m,n} & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{k,l})_{m,n} \\
-                        & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-i} \cdot \ddeltat (E^{0,0})_{m-k,n-l}
+    \ddeltatt (X)_{m,n} & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-j} \cdot \ddeltat (E^{k,l})_{m,n} \\
+                        & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X_{i,j} \sum_{k=0}^{N-1} \sum_{l=0}^{N-1} \ddeltat (E^{0,0})_{k-i,l-j} \cdot \ddeltat (E^{0,0})_{m-k,n-l}
  \end{split}
 \end{equation}
 
@@ -270,16 +270,16 @@ Especially, for $X = E^{0,0}$:
 For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equation \ref{avequnit} and then apply equation \ref{aveq} to get $\ddeltatt(X)$. The algorithm is:
 
 \begin{algorithm}[H]
-\DontPrintSemicolon
-\LinesNotNumbered
-\KwIn{t, X}
-\KwOut{$\ddeltat(X)$}
+    \DontPrintSemicolon
+    \LinesNotNumbered
+    \KwIn{t, X}
+    \KwOut{$\ddeltat(X)$}
+        $R \leftarrow E^{0,0}$; \\
+        \For{i=1 \textbf{to} $\log(t) - 1$}{
+            Compute $R \leftarrow \delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$ (previous value of $R$) and equation \ref{avequnit}
+        }
+        Compute and return $\ddeltat(X)$ using $R = \delta^{\dag^{t/2}}(E^{0,0})$ and equation \ref{aveq}
 \caption{Fast iteration on average automaton\label{algoq5}}
-$R \leftarrow E^{0,0}$; \\
-\For{i=1 \textbf{to} $\log(t) - 1$}{
-    Compute $R \leftarrow \delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$ (previous value of $R$) and equation \ref{avequnit}
-}
-Compute and return $\ddeltat(X)$ using $R = \delta^{\dag^{t/2}}(E^{0,0})$ and equation \ref{aveq}
 \end{algorithm}
 
  Let $T'(t)$ be the time needed to compute $\ddeltat(E^{0,0})$. According to equation \ref{avequnit} we have:
@@ -343,10 +343,38 @@ Using the same reasoning than in question 5, for all $0 \leq m, n \leq N-1$ we h
  \begin{split}
     X^t_{m,n} & = \ddeltat (X^0)_{m,n} \\
               & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot \ddeltat (E^{i,j})_{m,n} \\
-              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot \ddeltat (E^{0,0})_{m-i,n-i} \\
-              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot Z^t_{m-i,n-i} \\
+              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot \ddeltat (E^{0,0})_{m-i,n-j} \\
+              & = \sum_{i=0}^{N-1} \sum_{j=0}^{N-1} X^0_{i,j} \cdot Z^t_{m-i,n-j} \\
  \end{split}
 \end{equation}
+
+Since $X^0$ is sparse, we assume that each processor $p$ stores the list of \textit{all} the triples $(i,j,X^0_{i,j})$ such that $X^0_{i,j} \neq 0$.
+
+The following algorithm computes $X^t$. \texttt{LocalizeCell(i,j)} returns the number of the processor storing $Z^t_{i,j}$. \texttt{LocalizeProc(p)} returns the position $(i,j)$ of the top left cell of $Z^t$ (or identically, of $X^t$) stored in processor $p$. Thus the submatrix of $Z^t$ stored in processor $p$ is:
+\[
+   \begin{array}{ | c | c | c |} \hline
+    Z^t_{\texttt{LocalizeProc(p)}} & \cdots & Z^t_{\texttt{LocalizeProc(p) + (0,n)}}\\ \hline
+    \vdots & \vdots & \vdots \\ \hline
+    Z^t_{\texttt{LocalizeProc(p) + (n,0)}} & \cdots & Z^t_{\texttt{LocalizeProc(p) + (n,n)}}\\ \hline
+  \end{array}
+\]
+
+All processors execute the following algorithm in parallel:
+
+\begin{algorithm}[H]
+    \DontPrintSemicolon
+    \LinesNotNumbered
+    var L: list of non null cells of $X^0$, sorted in increasing order; \\
+    var A: array[0..n-1][0..n-1] part of $Z^t$ handled by the processor ($Z^t$ is distributed); \\
+    var B: array[0..n-1][0..n-1] part of $X^t$ handled by the processor ($X^t$ is distributed); \\ 
+    \For{ all $(i,j,X_{i,j})$ taken in L in increasing order}{
+        \For{l=0 \textbf{to} n-1}{
+            q
+        }
+    }
+\caption{Fast iteration on average automaton with sparse initial condition\label{algoq7}}
+\end{algorithm}
+
 
 %#############################################################################################################%
 
@@ -450,11 +478,11 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
 \end{prop}
 
 \begin{proof}
-  We assume the limit $\xinf$ of $(X_t)$ exists.
+  We assume that the limit $\xinf$ of $(X_t)$ exists.
   
   First of all, we prove that all the values of $\xinf$ are equal. 
   
-  Let us consider a value $d$ contained into $\xinf$ and assume not all the cells of $\xinf$ are equal to $d$.
+  Let us consider a value $d$ contained into $\xinf$ and assume that not all the cells of $\xinf$ are equal to $d$.
   
   \textbf{First case} There exists a cell in $\xinf$ that contains a value strictly lower than $d$. We consider a cell $C$ of $\xinf$ containing the lowest value $e$ of $\xinf$ and such that one of its 4 neighbours is different from $e$ (at least one cell contains $d > e$, so $C$ exists). According to lemmas \ref{fix} and \ref{aver}, the value of $C$ must be the average of its 4 neighbours. Since $e$ is the lowest value of $\xinf$ and one of the neighbours of $C$ contains a value different from $e$ (so strictly greater than $e$), $C$ cannot contains the average of its 4 neighbours. \underline{It is absurd.}
 
@@ -473,7 +501,7 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
 \end{prop}
 
 \begin{proof}
-  We assume the limit $\xinf$ of $(X_t)$ exists.
+  We assume that the limit $\xinf$ of $(X_t)$ exists.
   
   As in property \ref{limnoc}, we prove by contradiction that all the cells of $\xinf$ must be equal to $c$, in the corresponding proof we choose $c$ for the value $d$ and the corresponding cell $C$ (that is supposed to contain the lowest or greatest value of the configuration, different from $c=d$) cannot be a constant cell.
 \end{proof}
@@ -487,16 +515,14 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
  \end{prop}
 
  \begin{proof}
-   Let's consider the following local configuration:
+   Let's consider the following local configuration with one constant (in blue):
    \[\begin{array}{ | c | c | c |} \hline
     0 & 0 & 0 \\ \hline
-    0 & 1 & 0 \\ \hline
+    0 & \cellcolor{blue!50} 1 & 0 \\ \hline
     0 & 0 & 0 \\ \hline
   \end{array}\]
   
-  We assume that 1 is a constant, but 0 not. We take $p=0.5$.
-  
-  We have:
+  We take $p=0.5$ and we obtain:
  \[\begin{split}
  \delta \left(\begin{array}{ | c | c | c |} \hline
   0 & 0 & 0 \\ \hline

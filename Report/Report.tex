@@ -337,23 +337,55 @@ For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equati
 
 Matrices $R$ and $\ddeltat(X)$ are distributed in the same way than in question 2 (each processor stores a submatrix of size $n \cdot n$).
 
-We use the following extra functions (\texttt{LocalizeCell} and \texttt{LocalizeProc} work on matrices $M$ of size $N \cdot N$ distributed on $p^2$ processors according to question 2):
+Each step of the \texttt{for} loop of algorithm \ref{algoq5} is performed in the following way:
 \begin{itemize}
- \item \texttt{LocalizeCell(i,j)}: returns the triple $(p,k,l)$ where $p$ is the processor storing $M_{i,j}$ at position $(k,l)$ in its submatrix.
- \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $M$ of the cell stored at position $(k,l)$ in the submatrix of processor $p$.
- \item \texttt{Send(p,t,msg)}: send message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
- \item \texttt{Receive(p,t,dest)}: receive message of tag \texttt{t} sent by processor \texttt{p} and store it in \texttt{dest}.
+ \item each processor broadcasts its submatrix to all the other processors.
+ \item using equation \ref{avequnit}, each processor updates a temporary submatrix $B$ initially null, as soon as it receives the submatrices it needs.
+ \item each processor replaces the part of $R$ it stores by the submatrix $B$.
 \end{itemize}
 
-For instance, the submatrix of $M$ stored in processor $p$ is:
-\[
-   \begin{array}{ | c | c | c |} \hline
-    M_{\texttt{LocalizeProc(p,0,0)}} & \cdots & M_{\texttt{LocalizeProc(p,0,n-1)}}\\ \hline
-    \vdots & \vdots & \vdots \\ \hline
-    M_{\texttt{LocalizeProc(p,n-1,0)}} & \cdots & M_{\texttt{LocalizeProc(p,n-1,n-1)}}\\ \hline
-  \end{array}
-\]
+At the end of the previous steps, $\delta^{\dag^{t/2}}(E^{0,0})$ is computed and distributed. $\ddeltat(X)$ is computed in the same way than $\delta^{\dag^{t/2}}(E^{0,0})$ (each processor broadcasts the parts of $X^0$ and $\delta^{\dag^{t/2}}(E^{0,0})$ it stores, the computation is done using equation \ref{aveq}).
 
+
+\begin{prop}
+ The time complexity is $T_t(t,N) = O (\log(t) \cdot N^4 + N^6)$ (we do not count communication time).
+\end{prop}
+
+\begin{proof}
+ We recall that $n = \frac{N}{p}$.
+ 
+  At each step of the \texttt{for} loop, each processor performs $O(n^2 \cdot N^2)$ operations according to equation \ref{avequnit}. The final computation of $\ddeltat(X)$ using $\delta^{\dag^{t/2}}(E^{0,0})$ needs $O(N^2 \cdot N^4)$ operations. Thus $T_t(t,N) = \log(t) \cdot p^2 \cdot n^2 \cdot N^2 + N^6) = O(\log(t) \cdot N^4 + N^6)$.
+\end{proof}
+
+\begin{prop}
+ The space complexity is $T_s(t,N) = O(N^2)$.
+\end{prop}
+
+\begin{proof}
+ Each processor stores 3 arrays of size $n^2$ and need $O(n^2)$ extra space during broadcast operations. Moreover, this space can be reused at each new step. Thus:
+  \[
+    \begin{split}
+        T_s(t,N) & = O( p^2 \cdot n^2) \\
+                 & = O( N^2 )
+    \end{split}
+ \] 
+\end{proof}
+
+\begin{prop}
+ The communication time complexity is $T_c(t,N) = O( c \cdot p^2 \cdot \log(t) \cdot N^2)$.
+\end{prop}
+
+\begin{proof}
+ At each step of the \texttt{for} loop, each processor performs $O(p^2)$ broadcasts of a matrix of size $n^2$. Thus:
+  \[
+    \begin{split}
+        T_c(t,N) & = O( c \cdot p^2 \cdot p^2 \cdot \log(t) \cdot n^2) \\
+                 & = O( c \cdot p^2 \cdot \log(t) \cdot N^2)
+    \end{split}
+ \] 
+\end{proof}
+
+\iffalse
 \begin{algorithm}[H]
     \DontPrintSemicolon
     \LinesNotNumbered
@@ -389,6 +421,7 @@ For instance, the submatrix of $M$ stored in processor $p$ is:
 \end{algorithm}
 
 Initially, all the cells of $B$ must be null.
+\fi
 
 %#############################################################################################################%
 
@@ -407,7 +440,27 @@ Using the same reasoning than in question 5, for all $0 \leq m, n \leq N-1$ we h
 
 Since $X^0$ is sparse, we assume that each processor $p$ stores the list of \textit{all} the triples $(i,j,X^0_{i,j})$ such that $X^0_{i,j} \neq 0$.
 
-We use the extra functions defined into question 6. All processors execute the following algorithm in parallel:
+
+We use the following extra functions (\texttt{LocalizeCell} and \texttt{LocalizeProc} work on matrices $M$ of size $N \cdot N$ distributed on $p^2$ processors according to question 2):
+\begin{itemize}
+ \item \texttt{LocalizeCell(i,j)}: returns the triple $(p,k,l)$ where $p$ is the processor storing $M_{i,j}$ at position $(k,l)$ in its submatrix.
+ \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $M$ of the cell stored at position $(k,l)$ in the submatrix of processor $p$.
+ \item \texttt{Send(p,t,msg)}: send message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
+ \item \texttt{Receive(p,t,dest)}: receive message of tag \texttt{t} sent by processor \texttt{p} and store it in \texttt{dest}.
+\end{itemize}
+
+For instance, the submatrix of $M$ stored in processor $p$ is:
+\[
+   \begin{array}{ | c | c | c |} \hline
+    M_{\texttt{LocalizeProc(p,0,0)}} & \cdots & M_{\texttt{LocalizeProc(p,0,n-1)}}\\ \hline
+    \vdots & \vdots & \vdots \\ \hline
+    M_{\texttt{LocalizeProc(p,n-1,0)}} & \cdots & M_{\texttt{LocalizeProc(p,n-1,n-1)}}\\ \hline
+  \end{array}
+\]
+
+%We use the extra functions defined into question 6. 
+
+All processors execute the following algorithm in parallel:
 
 \begin{algorithm}[H]
     \DontPrintSemicolon
@@ -438,19 +491,19 @@ Initially, all the cells of $B$ must be null.
 \begin{proof}
  We recall that $n = \frac{N}{p}$.
  
- Each processor performs 3 loops \texttt{for}, with three operations at each iteration. Thus, $T_t(N,|X_0|) = 3 \cdot |X_0| \cdot n \cdot n = 3 \cdot |X_0| \cdot \frac{N^2}{p^2}$.
+ Each processor performs 3 loops \texttt{for}, with three operations at each iteration. Thus, $T_t(N,|X_0|) = |X_0| \cdot n \cdot n \cdot 3 = 3 \cdot |X_0| \cdot \frac{N^2}{p^2}$.
 \end{proof}
 
 \begin{prop}
- The space complexity $T_s(N,|X_0|)$ of algorithm \ref{algoq7} is $T_s(N,|X_0|) = N^2 + p^2 \cdot |X_0|$.
+ The space complexity $T_s(N,|X_0|)$ of algorithm \ref{algoq7} is $T_s(N,|X_0|) = 2 N^2 + p^2 \cdot |X_0|$.
 \end{prop}
 
 \begin{proof}
  Each processor stores two arrays of size $n^2$ and one list of size $|X_0|$. There are $p^2$ processors. We obtain:
  \[
     \begin{split}
-        T_s(N,|X_0|) & = p^2 \cdot (n^2 + |X_0|) \\
-                     & = N^2 + p^2 \cdot |X_0|
+        T_s(N,|X_0|) & = p^2 \cdot (2 n^2 + |X_0|) \\
+                     & = 2 N^2 + p^2 \cdot |X_0|
     \end{split}
  \] 
 \end{proof}

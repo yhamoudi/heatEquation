@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <mpi.h>
+#include <assert.h>
 #include "data.h"
 
 #define max(a,b) (a>b ? a : b)
@@ -10,14 +11,17 @@
 AverageAutomata initAutomata(int width, int height, int widthOffset, int heightOffset, double p) {
     int i,j ;
     AverageAutomata automata = (AverageAutomata) malloc(sizeof(struct averageautomata)) ;
+    assert(automata) ;
     automata->height = height ;
     automata->width = width ;
     automata->widthOffset = widthOffset ;
     automata->heightOffset = heightOffset ;
     automata->p = p ;
     automata->cells = (cell**) malloc((height+2)*sizeof(cell*)) ;
+    assert(automata->cells) ;
     for(i=0 ; i < height+2 ; i++) {
         automata->cells[i] = (cell*) malloc((width+2)*sizeof(cell)) ;
+        assert(automata->cells[i]) ;
         for(j = 0 ; j < width+2 ; j++) {
             automata->cells[i][j].content = 0 ;
             automata->cells[i][j].type = VALUE ;
@@ -70,8 +74,10 @@ double getCell(AverageAutomata automata, int i, int j) {
 cell **getnewcells(AverageAutomata automata) {
     int i,j ;
     cell **newcells = (cell**) malloc((automata->height+2)*sizeof(cell*)) ;
+    assert(newcells) ;
     for(i=0 ; i < automata->height+2 ; i++) {
         newcells[i] = (cell*) malloc((automata->width+2)*sizeof(cell)) ;
+        assert(newcells[i]) ;
         for(j = 0 ; j < automata->width+2 ; j++) {
             newcells[i][j].content = automata->cells[i][j].content ;
             newcells[i][j].type = automata->cells[i][j].type ;
@@ -122,6 +128,7 @@ int modulo(int n, int mod) {
 */
 Process initProcess(int myid, int nbproc, int width, int height, double p, int nbIter) {
     Process process = (Process) malloc(sizeof(struct process)) ;
+    assert(process) ;
     int cellsWidth, cellsHeight, cellsWidthOffset, cellsHeightOffset ;
     process->myid = myid ;
     process->nbproc = nbproc ;

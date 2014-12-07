@@ -72,8 +72,10 @@ void io(Process process) {
     int i, buffio[3] = {0,0,0} ;
     double content ;
     double *buffcolumns[8] ; /* buffers for messages */
-    for(i=0 ; i < 8 ; i++)
+    for(i=0 ; i < 8 ; i++) {
         buffcolumns[i] = (double*) malloc(process->automata->height*sizeof(double)) ;
+        assert(buffcolumns[i]) ;
+    }
     MPI_Status stat;
     while(1) {
         if(process->myid == ONLY) {
@@ -135,11 +137,14 @@ int main(int argc, char **argv) {
     /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
     process = initProcess(myid,nbproc,width,height,p,nbiter) ;
     if(process) { /* there is something to compute */
-        f = fopen(filename,"w");
-        printProcess(process,f);
-        fclose(f);
-        io(process);
-        delProcess(process);
+        f = fopen(filename,"w") ;
+        printProcess(process,f) ;
+        fclose(f) ;
+        io(process) ;
+        delProcess(process) ;
+    }
+    else {
+        fprintf(stderr,"Process %d is idle.\n",myid) ;
     }
     MPI_Finalize() ;
     return 0 ;

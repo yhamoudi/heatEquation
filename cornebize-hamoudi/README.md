@@ -6,7 +6,7 @@ Some issues were encountered, depending on the version of mpicc.
 
 We tested the following command on several systems `mpirun -n 8 average < examples/1`:
 
-It worked for the following versions of mpicc:
+It worked for the following versions of mpicc (in particular, it worked on servsls.ens-lyon.fr):
 
 * gcc (Debian 4.8.2-1) 4.8.2
 * gcc (Debian 4.7.2-5) 4.7.2

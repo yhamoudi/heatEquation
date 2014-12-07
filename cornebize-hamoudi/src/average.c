@@ -4,10 +4,13 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
-#include "data.h"
+#include "automata.h"
+#include "process.h"
 
 #define ONLY 0
 #define TAG 0
+#define max(a,b) (a>b ? a : b)
+#define min(a,b) (a>b ? b : a)
 
 /* Compute in a distributed fashion one step of the delta function. */
 void compute(Process process, double **buff) {
@@ -79,7 +82,7 @@ void inputOutput(Process process) {
     double content ;
     double *buffcolumns[8] ; /* buffers for messages */
     for(i=0 ; i < 8 ; i++) {
-        buffcolumns[i] = (double*) malloc(process->automata->height*sizeof(double)) ;
+        buffcolumns[i] = (double*) malloc(max(process->automata->height,process->automata->width)*sizeof(double)) ;
         assert(buffcolumns[i]) ;
     }
     MPI_Status stat;

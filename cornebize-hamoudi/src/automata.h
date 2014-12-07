@@ -1,5 +1,5 @@
-#ifndef __DATA_H
-#define __DATA_H
+#ifndef __AUTOMATA_H
+#define __AUTOMATA_H
 
 typedef struct{
     double content;
@@ -41,25 +41,5 @@ double getCell(AverageAutomata automata, int i, int j) ;
 
 /* Compute one step of the delta function. */
 void delta(AverageAutomata automata) ;
-
-struct process {
-    int nbproc, gridHeight, gridWidth;
-    int myid, myrow, mycol;
-    int left, right, up, down ;
-    int currentIter, nbIter ;
-    AverageAutomata automata ;
-};
-
-typedef struct process *Process ;
-
-/* Compute all the necessary informations for the process. */
-/* Returns NULL if the process must be killed (it has nothing to compute. */
-Process initProcess(int myid, int nbproc, int width, int height, double p, int nbIter) ;
-
-/* Deletetion of the process. */
-void delProcess(Process process) ;
-
-void printProcess(Process process, FILE *f) ;
-
 
 #endif

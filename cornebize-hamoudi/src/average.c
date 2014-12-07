@@ -11,7 +11,7 @@
 void compute(Process process, double **buff) {
     int i ;
     MPI_Status stat;
-    if(process->left != process->right) { /* need to exchange messages */
+    if(process->left != process->myid) { /* need to exchange messages */
         /* Copy of the columns 1 and n in the buffers. */
         for(i = 1 ; i <= process->automata->height ; i++) {
             buff[0][i-1] = process->automata->cells[i][1].content ;
@@ -30,14 +30,14 @@ void compute(Process process, double **buff) {
         }
     }
     else { /* Already have the informations */
-        assert(process->gridWidth == 1 && process->left == process->myid) ;
+        assert(process->gridWidth == 1 && process->right == process->myid) ;
         for(i = 1 ; i <= process->automata->height ; i++) {
             process->automata->cells[i][0].content = process->automata->cells[i][process->automata->width].content ;
             process->automata->cells[i][process->automata->width+1].content = process->automata->cells[i][1].content ;
         }
     }
     /* Copy of the rows 1 and n in the buffers. */
-    if(process->up != process->down) { /* need to exchange messages */
+    if(process->up != process->myid) { /* need to exchange messages */
         for(i = 1 ; i <= process->automata->width ; i++) {
             buff[4][i-1] = process->automata->cells[1][i].content ;
             buff[5][i-1] = process->automata->cells[process->automata->height][i].content ;
@@ -55,7 +55,7 @@ void compute(Process process, double **buff) {
         }
     }
     else { /* Already have the informations */
-        assert(process->gridHeight == 1 && process->up == process->myid) ;
+        assert(process->gridHeight == 1 && process->down == process->myid) ;
         for(i = 1 ; i <= process->automata->width ; i++) {
             process->automata->cells[0][i].content = process->automata->cells[process->automata->height][i].content ;
             process->automata->cells[process->automata->height+1][i].content = process->automata->cells[1][i].content ;

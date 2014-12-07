@@ -166,9 +166,6 @@ int main(int argc, char **argv) {
             delProcess(process) ;
         }
     }
-    else {
-        fprintf(stderr,"Process %d is idle.\n",myid) ;
-    }
     MPI_Finalize() ;
     return 0 ;
 }

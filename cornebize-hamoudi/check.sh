@@ -3,16 +3,9 @@ then
     echo "Syntax: " $0 " <file>"
     exit
 fi
-mpirun -n 1 average < $1 > tmp1.out
-for i in {2..10}
+for i in {1..10}
 do
-    mpirun -n $i average < $1 > tmp2.out
-    if [ $? -ne 0 ]
-    then
-        echo "Error for n="$i
-        exit
-    fi
-    diff tmp1.out tmp2.out
+    mpirun -n $i average < $1 #> /dev/null
     if [ $? -ne 0 ]
     then
         echo "Error for n="$i

@@ -9,6 +9,7 @@
 #define ONLY 0
 #define TAG 0
 
+/* Compute in a distributed fashion one step of the delta function. */
 void compute(Process process, double **buff) {
     int i ;
     MPI_Request send_requests[4] = {MPI_REQUEST_NULL,MPI_REQUEST_NULL,MPI_REQUEST_NULL,MPI_REQUEST_NULL} ;
@@ -69,7 +70,11 @@ void compute(Process process, double **buff) {
         MPI_Wait(&send_requests[i], MPI_STATUS_IGNORE) ;
 }
 
-void io(Process process) {
+/* Main function. */
+/* Read on the standard input the input data and the requests.
+ * Compute the delta transition.
+ * Print on the standard output to answer to the requests. */
+void inputOutput(Process process) {
     int i, buffio[3] = {0,0,0} ;
     double content ;
     double *buffcolumns[8] ; /* buffers for messages */
@@ -152,7 +157,7 @@ int main(int argc, char **argv) {
             ok = 0;
         }
         if(ok) {
-            io(process) ;
+            inputOutput(process) ;
             delProcess(process) ;
         }
     }

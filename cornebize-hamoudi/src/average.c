@@ -98,10 +98,13 @@ void inputOutput(Process process) {
         MPI_Bcast(&content, 1, MPI_DOUBLE, ONLY, MPI_COMM_WORLD) ;
         if(buffio[0] == -1)
             break ;
-        if(buffio[0] == 0) {
+        else if(buffio[0] == 0) {
             setCellValue(process->automata,buffio[1],buffio[2],content) ;
         }
-        if(buffio[0] == 2) {
+        else if(buffio[0] == 1) {
+            setCellConstant(process->automata,buffio[1],buffio[2],content) ;
+        }
+        else if(buffio[0] == 2) {
             while(process->currentIter < process->nbIter) {
                 compute(process, buffcolumns) ;
             }

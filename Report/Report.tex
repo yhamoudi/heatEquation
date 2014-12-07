@@ -79,7 +79,7 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 
 \subsection*{Question 3}
 
-We assume that $X^t$ is already distributed. Each processor is responsible of a submatrix of $X^t$ of size $n \cdot n$. In practice, each processor also stores the 2 neighbours rows and the 2 neighbours colones of its submatrix. For each processor, we denote by $PREV$ the submatrix of size $(n+2) \times (n+2)$ it stores.
+We assume that $X^t$ is already distributed. Each processor is responsible for a submatrix of $X^t$ of size $n \cdot n$. In practice, each processor also stores the 2 neighbours rows and the 2 neighbours colones of its submatrix. For each processor, we denote by $PREV$ the submatrix of size $(n+2) \times (n+2)$ it stores.
 
 We also assume that the order of messages is preserved.
 
@@ -93,7 +93,7 @@ Let $$\delta(PREV,i,j) = \delta \left( \begin{array}{ | c | c | c |} \hline
 
  \end{array} \right)$$
 
-We consider functions \texttt{Send\_X} (resp. \texttt{Receive\_X}) for \texttt{X = Up, Down, Left, Right} which sends (resp. receives) to (resp. from) the corresponding processor. 
+We consider function \texttt{Send\_X} (resp. \texttt{Receive\_X}) for \texttt{X = Up, Down, Left, Right} which sends (resp. receives) to (resp. from) the corresponding processor. 
 We suppose that this function has a time cost of $1$ and a communication cost of $L+b$ where $L$ is the latency and $b$ the bandwidth.
 
 We also consider functions to send an entire row (resp. column) as one single message, to decrease the overall latency. For instance, \texttt{Send\_Down\_Row(n,PREV)} will send to the down processor the $\text{n}^{th}$ row, whereas \texttt{Send\_Up\_Row(0,PREV)} will receive from the up processor a row, which will be stored as the $\text{0}^{th}$ row.
@@ -181,7 +181,7 @@ On a non-toric grid, processors placed on edges cannot send directly their infor
 
 \textbf{\large{Ring topology}}
 
-On a ring topology we distribute the matrix in a different way. Each processors stores $\frac{N}{p^2}$ contiguous lines of the matrix. Thus, each processor only needs to get/send values to its 2 immediate neighbours in the ring.
+On a ring topology we distribute the matrix in a different way. Each processor stores $\frac{N}{p^2}$ contiguous lines of the matrix. Thus, each processor only needs to get/send values to its 2 immediate neighbours in the ring.
 
 \underline{Time complexity}
 \begin{itemize}

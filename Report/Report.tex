@@ -147,21 +147,53 @@ We suppose that this function has a time cost of $n$ and a communication cost of
 }
 \end{algorithm}
 
-Time complexity: $8(n+1) + n^2 \text{cost}(\delta) = 8(\frac{N}{p}+1) + \left(\frac{N}{p}\right)^2 \text{cost}(\delta) = \cplx{\left(\frac{N}{p}\right)^2}$ if $\text{cost}(\delta) = \cplx{1}$.
+\underline{Time complexity}
+\begin{itemize}
+ \item \textit{Each processor:} $8(n+1) + n^2 \text{cost}(\delta) = 8(\frac{N}{p}+1) + \left(\frac{N}{p}\right)^2 \text{cost}(\delta) = \cplx{\left(\frac{N}{p}\right)^2}$ if $\text{cost}(\delta) = \cplx{1}$.
+ \item \textit{All processors:} $\cplx{N^2}$
+\end{itemize}
 
-Communication complexity (one processor): $8(L+nb+L+1) = 8(2L+\frac{N}{p}b+1)$.
-
-Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Npb+p^2)$.
-
-\medbreak
-
-\todo{Non-toric grid? Ring topology? Don't know a nice way to do this...}
+\underline{Communication complexity}
+\begin{itemize}
+ \item \textit{Each processor:} $8(L+nb+L+1) = 8(2L+\frac{N}{p}b+1)$.
+ \item \textit{All processors:} $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Npb+p^2)$.
+\end{itemize}
 
 \textbf{\large{Non-toric grid}}
 
 On a non-toric grid, processors placed on edges cannot send directly their information to their neighbours. They have to pass their messages throughout the whole grid. It needs $p$ steps of communication instead of one.
 
+\underline{Time complexity}
+\begin{itemize}
+ \item \textit{Each processor on an edge and not on a corner of the grid:} $(6+2p)(8(n+1) + n^2 \text{cost}(\delta))$.
+ \item \textit{Each processor on a corner:} $(4+4p)(8(n+1) + n^2 \text{cost}(\delta))$.
+ \item \textit{Each processor not on an edge:} $8(n+1) + n^2 \text{cost}(\delta)$.
+ \item \textit{All processors:} $4(p-2)(6+2p)(8(n+1) + n^2 \text{cost}(\delta)) + 4(4+4p)(8(n+1) + n^2 \text{cost}(\delta)) + (p-1)^2 (8(n+1) + n^2 \text{cost}(\delta)) = \cplx{N^2}$
+\end{itemize}
+
+\underline{Communication complexity}
+\begin{itemize}
+ \item \textit{Each processor on an edge and not on a corner of the grid:} $6(L+nb+L+1) + 2p(L+nb+L+1) = (6+2p)(2L+\frac{N}{p}b+1)$.
+ \item \textit{Each processor on a corner:} $4(L+nb+L+1) + 4p(L+nb+L+1) = (4+4p)(2L+\frac{N}{p}b+1)$.
+ \item \textit{Each processor not on an edge:} $8(L+nb+L+1) = 8(2L+\frac{N}{p}b+1)$.
+ \item \textit{All processors:} $4(p-2)(6+2p)(2L+\frac{N}{p}b+1) + 4(4+4p)(2L+\frac{N}{p}b+1) + (p-1)^2 8(2L+\frac{N}{p}b+1) = \cplx{p^2 (L + \frac{N}{p}b)}$
+\end{itemize}
+
 \textbf{\large{Ring topology}}
+
+On a ring topology we distribute the matrix in a different way. Each processors stores $\frac{N}{p^2}$ contiguous lines of the matrix. Thus, each processor only needs to get/send values to its 2 immediate neighbours in the ring.
+
+\underline{Time complexity}
+\begin{itemize}
+ \item \textit{Each processor:} $4n + N \cdot \frac{N}{p^2} \text{cost}(\delta)$ (4 rows are exchanged and $N \cdot \frac{N}{p^2}$ cells are updated).
+ \item \textit{All processors:} $p^2 (4n + N \cdot \frac{N}{p^2} \text{cost}(\delta))$
+\end{itemize}
+
+\underline{Communication complexity}
+\begin{itemize}
+ \item \textit{Each processor:} $4N(L+nb)$ (each processor sends 2 rows and receive 2 rows).
+ \item \textit{All processors:} $p^2 4N(L+nb)$
+\end{itemize}
 
 %#############################################################################################################%
 %#############################################################################################################%

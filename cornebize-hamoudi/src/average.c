@@ -34,7 +34,7 @@ void compute(Process process, double **buff) {
             process->automata->cells[i][process->automata->width+1].content = buff[3][i-1] ;
         }
     }
-    else { /* Already have the informations */
+    else { /* Already have the information */
         assert(process->gridWidth == 1 && process->right == process->myid) ;
         for(i = 1 ; i <= process->automata->height ; i++) {
             process->automata->cells[i][0].content = process->automata->cells[i][process->automata->width].content ;
@@ -59,7 +59,7 @@ void compute(Process process, double **buff) {
             process->automata->cells[process->automata->height+1][i].content = buff[7][i-1] ;
         }
     }
-    else { /* Already have the informations */
+    else { /* Already have the information */
         assert(process->gridHeight == 1 && process->down == process->myid) ;
         for(i = 1 ; i <= process->automata->width ; i++) {
             process->automata->cells[0][i].content = process->automata->cells[process->automata->height][i].content ;
@@ -86,6 +86,7 @@ void inputOutput(Process process) {
         assert(buffcolumns[i]) ;
     }
     while(1) {
+        /* Process ONLY reads stdin */
         if(process->myid == ONLY) {
             for(i = 0 ; i < 3 ; i++) {
                 if(scanf("%d",&buffio[i])==EOF) {
@@ -96,18 +97,19 @@ void inputOutput(Process process) {
             if(scanf("%lf",&content)==EOF)
                 buffio[0] = -1 ;
         }
+        /* Sending of the read values. */
         MPI_Bcast(buffio, 3, MPI_INT, ONLY, MPI_COMM_WORLD) ;
         MPI_Bcast(&content, 1, MPI_DOUBLE, ONLY, MPI_COMM_WORLD) ;
-        if(buffio[0] == -1)
+        if(buffio[0] == -1) /* EOF, exit */
             break ;
-        else if(buffio[0] == 0) {
+        else if(buffio[0] == 0) { /* new value */
             setCellValue(process->automata,buffio[1],buffio[2],content) ;
         }
-        else if(buffio[0] == 1) {
+        else if(buffio[0] == 1) { /* new constant */
             setCellConstant(process->automata,buffio[1],buffio[2],content) ;
         }
-        else if(buffio[0] == 2) {
-            while(process->currentIter < process->nbIter) {
+        else if(buffio[0] == 2) { /* new request */
+            while(process->currentIter < process->nbIter) { /* computation of the delta function, if necessary */
                 compute(process, buffcolumns) ;
             }
             content = getCell(process->automata,buffio[1],buffio[2]) ;
@@ -134,12 +136,14 @@ int main(int argc, char **argv) {
     Process process ;
     MPI_Comm_rank(MPI_COMM_WORLD,&myid) ;
     MPI_Comm_size(MPI_COMM_WORLD, &nbproc) ;
+    /* Process ONLY reads stdin */
     if(myid==ONLY) {
         scanf("%d",&width) ;
         scanf("%d",&height) ;
         scanf("%lf",&p) ;
         scanf("%d",&nbiter) ;
     }
+    /* Sending of the read values */
     MPI_Bcast(&width, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
     MPI_Bcast(&height, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
     MPI_Bcast(&p, 1, MPI_DOUBLE, ONLY, MPI_COMM_WORLD) ;
@@ -148,20 +152,20 @@ int main(int argc, char **argv) {
     process = initProcess(myid,nbproc,width,height,p,nbiter) ;
     if(process) { /* there is something to compute */
         int ok = 1 ;
-        if(argc == 2 && !strcmp("-log",argv[1])) {
+        if(argc == 2 && !strcmp("-log",argv[1])) { /* logging process information */
             sprintf(&filename[sizeof("average.log.")-1], "%d", myid) ;
             f = fopen(filename,"w") ;
             printProcess(process,f) ;
             fclose(f) ;
         }
-        else if(argc != 1) {
+        else if(argc != 1) { /* wrong syntax */
             if(process->myid == ONLY) {
                 printf("Syntax: ./%s\n",argv[0]) ;
                 printf("        ./%s -log\n",argv[0]) ;
             }
             ok = 0;
         }
-        if(ok) {
+        if(ok) { /* computation */
             inputOutput(process) ;
             delProcess(process) ;
         }

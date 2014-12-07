@@ -29,6 +29,8 @@ int modulo(int n, int mod) {
     left (i,j-1)     p (i,j)      right (i,j+1)
                     down (i+1,j)
 */
+/* Compute all the necessary informations for the process. */
+/* Returns NULL if the process must be killed (it has nothing to compute. */
 Process initProcess(int myid, int nbproc, int width, int height, double p, int nbIter) {
     Process process = (Process) malloc(sizeof(struct process)) ;
     assert(process) ;
@@ -80,11 +82,13 @@ Process initProcess(int myid, int nbproc, int width, int height, double p, int n
     return process ;
 }
 
+/* Deletetion of the process. */
 void delProcess(Process process) {
     delAutomata(process->automata) ;
     free(process) ;
 }
 
+/* Logging function. */
 void printProcess(Process process, FILE *f) {
     printAutomata(process->automata, f) ;
     fprintf(f,"\n## PROCESS ##\n") ;

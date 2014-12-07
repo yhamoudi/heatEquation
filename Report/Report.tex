@@ -263,7 +263,7 @@ Especially, for $X = E^{0,0}$:
 \end{equation}
 
 \begin{prop}
- Equations \ref{aveq} and \ref{avequnit} enable us to compute $\ddeltat(X)$ in time $O(log(t))$ for a fixed $N$.
+ Equations \ref{aveq} and \ref{avequnit} enable us to compute $\ddeltat(X)$ in time $\cplx{\log(t)}$ for a fixed $N$.
 \end{prop}
 
 \begin{proof}
@@ -284,49 +284,49 @@ For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equati
 
  Let $T'(t)$ be the time needed to compute $\ddeltat(E^{0,0})$. According to equation \ref{avequnit} we have:
  \[\begin{split}
-    T'(t) & = T'(t/2) + O(1) \\
-         & = O(\log(t))
+    T'(t) & = T'(t/2) + \cplx{1}\\
+         & = \cplx{\log(t)}
    \end{split}
 \]
  
  Now let $T(t)$ be the time needed to compute $\ddeltat(X)$. According to equation \ref{aveq} and previous remarks, we have:
  \[\begin{split}
-    T(t) & = T'(t/2) + O(1) \\
-	 & = O(\log(t))
+    T(t) & = T'(t/2) + \cplx{1} \\
+    & = \cplx{\log(t)}
    \end{split}
 \]
  
- Thus, applying the operations described in equations \ref{aveq} and \ref{avequnit}, we can compute $\ddeltat(X)$ in time $O(\log(t))$. 
+ Thus, applying the operations described in equations \ref{aveq} and \ref{avequnit}, we can compute $\ddeltat(X)$ in time $\cplx{\log(t)}$. 
 \end{proof}
 
 \begin{prop}
- The time complexity $T_r(t,N)$ in terms of both $t$ and $N$ is $T_r(t,N) = O(N^4 \cdot \log(t) + N^6)$.
+ The time complexity $T_r(t,N)$ in terms of both $t$ and $N$ is $T_r(t,N) = \cplx{N^4 \cdot \log(t) + N^6}$.
 \end{prop}
 
 \begin{proof}
   Let $T_e(t,N)$ be the time needed to compute $\ddeltat(E^{0,0})$. According to equation \ref{avequnit} we have:
  \[\begin{split}
     T_e(t) & = T_e(t/2) + N^2 \cdot N^2 \text{ (there are } N^2 \text{ cells and each one needs to perform } N^2 \text{ sums)} \\
-         & = O(N^4 \cdot \log(t))
+         & = \cplx{N^4 \cdot \log(t)}
    \end{split}
 \]  
   
-  According to equation \ref{aveq} and the previous algorithm, knowing $\delta^{\dag^{t/2}}(E^{0,0})$ it remains to perform for each cell the four sums described in equation \ref{aveq} (it takes time $O(N^4)$ per cell). Finally, we have:
+  According to equation \ref{aveq} and the previous algorithm, knowing $\delta^{\dag^{t/2}}(E^{0,0})$ it remains to perform for each cell the four sums described in equation \ref{aveq} (it takes time $\cplx{N^4}$ per cell). Finally, we have:
   \[ T_r(t,N) = T_e(t/2,N) + N^2 \cdot N^4\]
   
-  Thus: $T_r(t,N) = O(N^4 \cdot \log(t) + N^6)$.
+  Thus: $T_r(t,N) = \cplx{N^4 \cdot \log(t) + N^6}$.
   
-  According to question 3, the complexity in general case is $O(N^2 \cdot t)$. The algorithm using the linearity of $\ddelta$ is more interesting when the number of steps $t$ increases.
+  According to question 3, the complexity in general case is $\cplx{N^2 \cdot t}$. The algorithm using the linearity of $\ddelta$ is more interesting when the number of steps $t$ increases.
 \end{proof}
 
 \begin{prop}
- The space complexity $T_s(t,N)$ in terms of both $t$ and $N$ is $T_s(t,N) = O(N^2)$.
+ The space complexity $T_s(t,N)$ in terms of both $t$ and $N$ is $T_s(t,N) = \cplx{N^2}$.
 \end{prop}
 
 \begin{proof}
  We need $N^2$ space to store the initial matrix.
 
- When we compute $\delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$, we need to use $N^2$ space to store $\delta^{\dag^{2^i}}$. However, the space used by $\delta^{\dag^{2^{i-1}}}$ can be re-use to compute $\delta^{\dag^{2^{i+1}}}$. Thus, all the computation can be done using $O(N^2)$ space.
+ When we compute $\delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$, we need to use $N^2$ space to store $\delta^{\dag^{2^i}}$. However, the space used by $\delta^{\dag^{2^{i-1}}}$ can be re-use to compute $\delta^{\dag^{2^{i+1}}}$. Thus, all the computation can be done using $\cplx{N^2}$ space.
  
  The space complexity is the same than in the general case.
 \end{proof}
@@ -354,33 +354,33 @@ At the end of the previous steps, $\delta^{\dag^{t/2}}(E^{0,0})$ is computed and
 \begin{proof}
  We recall that $n = \frac{N}{p}$.
  
-  At each step of the \texttt{for} loop, each processor performs $O(n^2 \cdot N^2)$ operations according to equation \ref{avequnit}. The final computation of $\ddeltat(X)$ using $\delta^{\dag^{t/2}}(E^{0,0})$ needs $O(N^2 \cdot N^4)$ operations. Thus $T_t(t,N) = \log(t) \cdot p^2 \cdot n^2 \cdot N^2 + N^6) = O(\log(t) \cdot N^4 + N^6)$.
+  At each step of the \texttt{for} loop, each processor performs $\cplx{n^2 \cdot N^2}$ operations according to equation \ref{avequnit}. The final computation of $\ddeltat(X)$ using $\delta^{\dag^{t/2}}(E^{0,0})$ needs $\cplx{N^2 \cdot N^4}$ operations. Thus $T_t(t,N) = \log(t) \cdot p^2 \cdot n^2 \cdot N^2 + N^6) = \cplx{\log(t) \cdot N^4 + N^6}$.
 \end{proof}
 
 \begin{prop}
- The space complexity is $T_s(t,N) = O(N^2)$.
+ The space complexity is $T_s(t,N) = \cplx{N^2}$.
 \end{prop}
 
 \begin{proof}
- Each processor stores 3 arrays of size $n^2$ and need $O(n^2)$ extra space during broadcast operations. Moreover, this space can be reused at each new step. Thus:
+ Each processor stores 3 arrays of size $n^2$ and need $\cplx{n^2}$ extra space during broadcast operations. Moreover, this space can be reused at each new step. Thus:
   \[
     \begin{split}
-        T_s(t,N) & = O( p^2 \cdot n^2) \\
-                 & = O( N^2 )
+        T_s(t,N) & = \cplx{p^2 \cdot n^2}\\
+                 & = \cplx{N^2}
     \end{split}
  \] 
 \end{proof}
 
 \begin{prop}
- The communication time complexity is $T_c(t,N) = O( c \cdot p^2 \cdot \log(t) \cdot N^2)$.
+ The communication time complexity is $T_c(t,N) = \cplx{c \cdot p^2 \cdot \log(t) \cdot N^2}$.
 \end{prop}
 
 \begin{proof}
- At each step of the \texttt{for} loop, each processor performs $O(p^2)$ broadcasts of a matrix of size $n^2$. Thus:
+ At each step of the \texttt{for} loop, each processor performs $\cplx{p^2}$ broadcasts of a matrix of size $n^2$. Thus:
   \[
     \begin{split}
-        T_c(t,N) & = O( c \cdot p^2 \cdot p^2 \cdot \log(t) \cdot n^2) \\
-                 & = O( c \cdot p^2 \cdot \log(t) \cdot N^2)
+        T_c(t,N) & = \cplx{c \cdot p^2 \cdot p^2 \cdot \log(t) \cdot n^2} \\
+                 & = \cplx{c \cdot p^2 \cdot \log(t) \cdot N^2}
     \end{split}
  \] 
 \end{proof}

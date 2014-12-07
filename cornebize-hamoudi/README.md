@@ -1,5 +1,20 @@
 # Distributing the Heat Equation
 
+## Issues
+
+Some issues were encountered, depending on the version of mpicc.
+
+We tested the following command on several systems `mpirun -n 8 average < examples/1`:
+
+It worked for the following versions of mpicc:
+
+* gcc (Debian 4.8.2-1) 4.8.2
+* gcc (Debian 4.7.2-5) 4.7.2
+
+It produced a segmentation fault for the following version of mpicc:
+
+* gcc (Ubuntu 4.8.2-19ubuntu1) 4.8.2
+
 ## Compilation
 
 ```

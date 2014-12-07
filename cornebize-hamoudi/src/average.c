@@ -3,6 +3,7 @@
 #include <mpi.h>
 #include <math.h>
 #include <assert.h>
+#include <string.h>
 #include "data.h"
 
 #define ONLY 0
@@ -122,13 +123,12 @@ int main(int argc, char **argv) {
     double p ;
     Process process ;
     MPI_Comm_rank(MPI_COMM_WORLD,&myid) ;
-    MPI_Comm_size(MPI_COMM_WORLD, &nbproc);
-    sprintf(&filename[sizeof("average.log.")-1], "%d", myid);
+    MPI_Comm_size(MPI_COMM_WORLD, &nbproc) ;
     if(myid==ONLY) {
-        scanf("%d",&width);
-        scanf("%d",&height);
-        scanf("%lf",&p);
-        scanf("%d",&nbiter);
+        scanf("%d",&width) ;
+        scanf("%d",&height) ;
+        scanf("%lf",&p) ;
+        scanf("%d",&nbiter) ;
     }
     MPI_Bcast(&width, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
     MPI_Bcast(&height, 1, MPI_INT, ONLY, MPI_COMM_WORLD) ;
@@ -137,11 +137,24 @@ int main(int argc, char **argv) {
     /* MPI programs start with MPI_Init; all 'N' processes exist thereafter */
     process = initProcess(myid,nbproc,width,height,p,nbiter) ;
     if(process) { /* there is something to compute */
-        f = fopen(filename,"w") ;
-        printProcess(process,f) ;
-        fclose(f) ;
-        io(process) ;
-        delProcess(process) ;
+        int ok = 1 ;
+        if(argc == 2 && !strcmp("-log",argv[1])) {
+            sprintf(&filename[sizeof("average.log.")-1], "%d", myid) ;
+            f = fopen(filename,"w") ;
+            printProcess(process,f) ;
+            fclose(f) ;
+        }
+        else if(argc != 1) {
+            if(process->myid == ONLY) {
+                printf("Syntax: ./%s\n",argv[0]) ;
+                printf("        ./%s -log\n",argv[0]) ;
+            }
+            ok = 0;
+        }
+        if(ok) {
+            io(process) ;
+            delProcess(process) ;
+        }
     }
     else {
         fprintf(stderr,"Process %d is idle.\n",myid) ;

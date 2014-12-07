@@ -54,7 +54,7 @@ void compute(Process process, double **buff) {
         MPI_Recv(buff[6], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
         MPI_Recv(buff[7], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
         /* Copy of the buffers in the columns 0 and n+1. */
-        for(i = 1 ; i <= process->automata->height ; i++) {
+        for(i = 1 ; i <= process->automata->width ; i++) {
             process->automata->cells[0][i].content = buff[6][i-1] ;
             process->automata->cells[process->automata->height+1][i].content = buff[7][i-1] ;
         }

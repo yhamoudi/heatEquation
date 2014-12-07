@@ -399,7 +399,7 @@ At the end of the previous steps, $\delta^{\dag^{t/2}}(E^{0,0})$ is computed and
 \end{prop}
 
 \begin{proof}
- Each processor stores 3 arrays of size $n^2$ and need $\cplx{n^2}$ extra space during broadcast operations. Moreover, this space can be reused at each new step. Thus:
+ Each processor stores 3 arrays of size $n^2$ and needs $\cplx{n^2}$ extra space during broadcast operations. Moreover, this space can be reused at each new step. Thus:
   \[
     \begin{split}
         T_s(t,N) & = \cplx{p^2 \cdot n^2}\\
@@ -422,44 +422,6 @@ At the end of the previous steps, $\delta^{\dag^{t/2}}(E^{0,0})$ is computed and
  \] 
 \end{proof}
 
-\iffalse
-\begin{algorithm}[H]
-    \DontPrintSemicolon
-    \LinesNotNumbered
-    var A: array[0..n-1][0..n-1] part of $R$ handled by the processor \\
-    var B: array[0..n-1][0..n-1] use to compute the next iteration of $\ddelta$ \\ 
-    p $\leftarrow$ \texttt{My\_Num()} \\
-    \For{ $i=1$ \textbf{to} $\log(t) - 1$}{
-        \For{ q=0 \textbf{to} n-1}{
-            \For{ r=0 \textbf{to} n-1}{
-                \For{ k=0 \textbf{to} N-1}{
-                    \For{ l=0 \textbf{to} N-1}{
-                        $(p_{r_1},\_,\_) \leftarrow$ \texttt{LocalizeCell((k,l))} \\
-                        $(p_{r_2},\_,\_) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,q,r)-(k,l))} \\
-                        \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\
-                        \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\
-                        \For{ all $(s,t) \in [0,n-1]^2$}{
-                            $(p_{r_1},\_,\_) \leftarrow$ \texttt{LocalizeCell((k,l))} \\
-                            $(p_{r_2},\_,\_) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,q,r)-(k,l))} \\
-                            \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\
-                            \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\                          
-                        }
-                        \texttt{Receive($p_{r_1}$,$(q,r)$,temp1)} \\
-                        \texttt{Receive($p_{r_1}$,$(q,r)$,temp2)} \\
-                        \texttt{B[q][r] $\leftarrow$ B[q][r] + temp1 $\cdot$ temp2
-                        }
-                    }
-                }
-            }
-        }
-        A $\leftarrow$ B \\
-    }
-\caption{Distributed iteration on average automaton with sparse initial condition\label{algoq6}}
-\end{algorithm}
-
-Initially, all the cells of $B$ must be null.
-\fi
-
 %#############################################################################################################%
 
 \subsection*{Question 7}
@@ -477,13 +439,12 @@ Using the same reasoning than in question 5, for all $0 \leq m, n \leq N-1$ we h
 
 Since $X^0$ is sparse, we assume that each processor $p$ stores the list of \textit{all} the triples $(i,j,X^0_{i,j})$ such that $X^0_{i,j} \neq 0$.
 
-
 We use the following extra functions (\texttt{LocalizeCell} and \texttt{LocalizeProc} work on matrices $M$ of size $N \cdot N$ distributed on $p^2$ processors according to question 2):
 \begin{itemize}
  \item \texttt{LocalizeCell(i,j)}: returns the triple $(p,k,l)$ where $p$ is the processor storing $M_{i,j}$ at position $(k,l)$ in its submatrix.
  \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $M$ of the cell stored at position $(k,l)$ in the submatrix of processor $p$.
- \item \texttt{Send(p,t,msg)}: send message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
- \item \texttt{Receive(p,t,dest)}: receive message of tag \texttt{t} sent by processor \texttt{p} and store it in \texttt{dest}.
+ \item \texttt{Send(p,t,msg)}: sends message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
+ \item \texttt{Receive(p,t,dest)}: receives message of tag \texttt{t} sent by processor \texttt{p} and stores it in \texttt{dest}.
 \end{itemize}
 
 For instance, the submatrix of $M$ stored in processor $p$ is:

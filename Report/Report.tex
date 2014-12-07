@@ -79,8 +79,7 @@ The computation of $\delta$ for the cells at the edges of the zones requires com
 
 \subsection*{Question 3}
 
-We assume that $X^t$ is given as an array $PREV$ of size $(n+2) \times (n+2)$, where $X^t_{i,j}$
-is written in $PREV[i][j]$ and where $PREV[i][j]$ are dummy values for $i \in \set{0,n+1}$ or $j \in \set{0,n+1}$.
+We assume that $X^t$ is already distributed. Each processor is responsible of a submatrix of $X^t$ of size $n \cdot n$. In practice, each processor also stores the 2 neighbours rows and the 2 neighbours colones of its submatrix. For each processor, we denote by $PREV$ the submatrix of size $(n+2) \times (n+2)$ it stores.
 
 We also assume that the order of messages is preserved.
 
@@ -157,6 +156,12 @@ Communication complexity (all processors): $8p^2(2L+\frac{N}{p}b+1) = 8(2p^2L+Np
 \medbreak
 
 \todo{Non-toric grid? Ring topology? Don't know a nice way to do this...}
+
+\textbf{\large{Non-toric grid}}
+
+On a non-toric grid, processors placed on edges cannot send directly their information to their neighbours. They have to pass their messages throughout the whole grid. It needs $p$ steps of communication instead of one.
+
+\textbf{\large{Ring topology}}
 
 %#############################################################################################################%
 %#############################################################################################################%

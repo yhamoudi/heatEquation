@@ -279,7 +279,7 @@ For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equati
             Compute $R \leftarrow \delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$ (previous value of $R$) and equation \ref{avequnit}
         }
         Compute and return $\ddeltat(X)$ using $R = \delta^{\dag^{t/2}}(E^{0,0})$ and equation \ref{aveq}
-\caption{Fast iteration on average automaton\label{algoq5}}
+\caption{Iteration on average automaton\label{algoq5}}
 \end{algorithm}
 
  Let $T'(t)$ be the time needed to compute $\ddeltat(E^{0,0})$. According to equation \ref{avequnit} we have:
@@ -312,9 +312,11 @@ For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equati
 \]  
   
   According to equation \ref{aveq} and the previous algorithm, knowing $\delta^{\dag^{t/2}}(E^{0,0})$ it remains to perform for each cell the four sums described in equation \ref{aveq} (it takes time $O(N^4)$ per cell). Finally, we have:
-  \[ T_r(t,N) = N^2 \cdot N^4 + T_e(t/2,N)\]
+  \[ T_r(t,N) = T_e(t/2,N) + N^2 \cdot N^4\]
   
   Thus: $T_r(t,N) = O(N^4 \cdot \log(t) + N^6)$.
+  
+  According to question 3, the complexity in general case is $O(N^2 \cdot t)$. The algorithm using the linearity of $\ddelta$ is more interesting when the number of steps $t$ increases.
 \end{proof}
 
 \begin{prop}
@@ -325,13 +327,68 @@ For computing $\ddeltatt(X)$ we need to compute $\ddeltat(E^{0,0})$ using equati
  We need $N^2$ space to store the initial matrix.
 
  When we compute $\delta^{\dag^{2^i}}(E^{0,0})$ using $\delta^{\dag^{2^{i-1}}}(E^{0,0})$, we need to use $N^2$ space to store $\delta^{\dag^{2^i}}$. However, the space used by $\delta^{\dag^{2^{i-1}}}$ can be re-use to compute $\delta^{\dag^{2^{i+1}}}$. Thus, all the computation can be done using $O(N^2)$ space.
+ 
+ The space complexity is the same than in the general case.
 \end{proof}
-
-\todo{Comparer au cas général}
 
 %#############################################################################################################%
 
 \subsection*{Question 6}
+
+Matrices $R$ and $\ddeltat(X)$ are distributed in the same way than in question 2 (each processor stores a submatrix of size $n \cdot n$).
+
+We use the following extra functions (\texttt{LocalizeCell} and \texttt{LocalizeProc} work on matrices $M$ of size $N \cdot N$ distributed on $p^2$ processors according to question 2):
+\begin{itemize}
+ \item \texttt{LocalizeCell(i,j)}: returns the triple $(p,k,l)$ where $p$ is the processor storing $M_{i,j}$ at position $(k,l)$ in its submatrix.
+ \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $M$ of the cell stored at position $(k,l)$ in the submatrix of processor $p$.
+ \item \texttt{Send(p,t,msg)}: send message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
+ \item \texttt{Receive(p,t,dest)}: receive message of tag \texttt{t} sent by processor \texttt{p} and store it in \texttt{dest}.
+\end{itemize}
+
+For instance, the submatrix of $M$ stored in processor $p$ is:
+\[
+   \begin{array}{ | c | c | c |} \hline
+    M_{\texttt{LocalizeProc(p,0,0)}} & \cdots & M_{\texttt{LocalizeProc(p,0,n-1)}}\\ \hline
+    \vdots & \vdots & \vdots \\ \hline
+    M_{\texttt{LocalizeProc(p,n-1,0)}} & \cdots & M_{\texttt{LocalizeProc(p,n-1,n-1)}}\\ \hline
+  \end{array}
+\]
+
+\begin{algorithm}[H]
+    \DontPrintSemicolon
+    \LinesNotNumbered
+    var A: array[0..n-1][0..n-1] part of $R$ handled by the processor \\
+    var B: array[0..n-1][0..n-1] use to compute the next iteration of $\ddelta$ \\ 
+    p $\leftarrow$ \texttt{My\_Num()} \\
+    \For{ $i=1$ \textbf{to} $\log(t) - 1$}{
+        \For{ q=0 \textbf{to} n-1}{
+            \For{ r=0 \textbf{to} n-1}{
+                \For{ k=0 \textbf{to} N-1}{
+                    \For{ l=0 \textbf{to} N-1}{
+                        $(p_{r_1},\_,\_) \leftarrow$ \texttt{LocalizeCell((k,l))} \\
+                        $(p_{r_2},\_,\_) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,q,r)-(k,l))} \\
+                        \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\
+                        \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\
+                        \For{ all $(s,t) \in [0,n-1]^2$}{
+                            $(p_{r_1},\_,\_) \leftarrow$ \texttt{LocalizeCell((k,l))} \\
+                            $(p_{r_2},\_,\_) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,q,r)-(k,l))} \\
+                            \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\
+                            \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} \\                          
+                        }
+                        \texttt{Receive($p_{r_1}$,$(q,r)$,temp1)} \\
+                        \texttt{Receive($p_{r_1}$,$(q,r)$,temp2)} \\
+                        \texttt{B[q][r] $\leftarrow$ B[q][r] + temp1 $\cdot$ temp2
+                        }
+                    }
+                }
+            }
+        }
+        A $\leftarrow$ B \\
+    }
+\caption{Distributed iteration on average automaton with sparse initial condition\label{algoq6}}
+\end{algorithm}
+
+Initially, all the cells of $B$ must be null.
 
 %#############################################################################################################%
 
@@ -350,24 +407,7 @@ Using the same reasoning than in question 5, for all $0 \leq m, n \leq N-1$ we h
 
 Since $X^0$ is sparse, we assume that each processor $p$ stores the list of \textit{all} the triples $(i,j,X^0_{i,j})$ such that $X^0_{i,j} \neq 0$.
 
-We use the following extra functions:
-\begin{itemize}
- \item \texttt{LocalizeCell(i,j)}: returns the triple $(p,k,l)$ where $p$ is the processor storing $Z^t_{i,j}$ (resp. $X^t_{i,j}$) at position $(k,l)$ in its submatrix.
- \item \texttt{LocalizeProc(p,k,l)}: returns the position $(i,j)$ in $Z^t$ (resp. $X^t$) of the cell of position $(k,l)$ in the submatrix stored in processor $p$.
- \item \texttt{Send(p,t,msg)}: send message \texttt{msg} at processor \texttt{p} with tag \texttt{t}.
- \item \texttt{Receive(p,t,dest)}: receive message of tag \texttt{t} sent by processor \texttt{p} and store it in \texttt{dest}.
-\end{itemize}
-
-For instance, the submatrix of $Z^t$ stored in processor $p$ is:
-\[
-   \begin{array}{ | c | c | c |} \hline
-    Z^t_{\texttt{LocalizeProc(p,0,0)}} & \cdots & Z^t_{\texttt{LocalizeProc(p,0,n-1)}}\\ \hline
-    \vdots & \vdots & \vdots \\ \hline
-    Z^t_{\texttt{LocalizeProc(p,n-1,0)}} & \cdots & Z^t_{\texttt{LocalizeProc(p,n-1,n-1)}}\\ \hline
-  \end{array}
-\]
-
-All processors execute the following algorithm in parallel:
+We use the extra functions defined into question 6. All processors execute the following algorithm in parallel:
 
 \begin{algorithm}[H]
     \DontPrintSemicolon
@@ -380,13 +420,13 @@ All processors execute the following algorithm in parallel:
         \For{ l=0 \textbf{to} n-1}{
             \For{ m=0 \textbf{to} n-1}{
                 $(p_s,q_s,r_s) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)+(i,j))} ; \\
-                $(p_r,q_r,r_r) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)-(i,j))} ; \\
+                $(p_r,\_,\_) \leftarrow$ \texttt{LocalizeCell(LocalizeProc(p,l,m)-(i,j))} ; \\
                 \texttt{Send($p_s$,$(q_s,r_s)$,A[l][m])} || \texttt{Receive($p_r$,$(l,m)$,temp)}; \\
                 \texttt{B[l][m] $\leftarrow$ B[l][m] + $X^0_{i,j} \cdot$ temp}
             }
         }
     }
-\caption{Fast iteration on average automaton with sparse initial condition\label{algoq7}}
+\caption{Distributed iteration on average automaton with sparse initial condition\label{algoq7}}
 \end{algorithm}
 
 Initially, all the cells of $B$ must be null.

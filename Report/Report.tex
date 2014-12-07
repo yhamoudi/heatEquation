@@ -100,51 +100,51 @@ We also consider functions to send an entire row (resp. column) as one single me
 We suppose that this function has a time cost of $n$ and a communication cost of $L+nb$ where $L$ is the latency, $b$ the bandwidth, and $n$ the size of the row/column.
 
 \begin{algorithm}[H]
-\SetKwFunction{sndup}{Send\_Up}
-\SetKwFunction{snddown}{Send\_Down}
-\SetKwFunction{sndleft}{Send\_Left}
-\SetKwFunction{sndright}{Send\_Right}
-\SetKwFunction{rcvup}{Receive\_Up}
-\SetKwFunction{rcvdown}{Receive\_Down}
-\SetKwFunction{rcvleft}{Receive\_Left}
-\SetKwFunction{rcvright}{Receive\_Right}
-\SetKwFunction{sndupr}{Send\_Up\_Row}
-\SetKwFunction{snddownr}{Send\_Down\_Row}
-\SetKwFunction{sndleftc}{Send\_Left\_Column}
-\SetKwFunction{sndrightc}{Send\_Right\_Column}
-\SetKwFunction{rcvupr}{Receive\_Up\_Row}
-\SetKwFunction{rcvdownr}{Receive\_Down\_Row}
-\SetKwFunction{rcvleftc}{Receive\_Left\_Column}
-\SetKwFunction{rcvrightc}{Receive\_Right\_Column}
-\DontPrintSemicolon
-\LinesNotNumbered
-\KwIn{PREV: array[0..n+1,0..n+1] of real}
-\KwOut{NEXT: array[0..n+1,0..n+1] of real}
-\tcc{Columns and row}
-\sndleftc{1,PREV}\;
-\sndrightc{n,PREV}\;
-\sndupr{1,PREV}\;
-\snddownr{n,PREV}\;
-\rcvleftc{0,PREV}\;
-\rcvrightc{n+1,PREV}\;
-\rcvupr{0,PREV}\;
-\rcvdownr{n+1,PREV}\;
-\tcc{Corners}
-\sndup{PREV[1][0]}\;
-\sndup{PREV[1][n+1]}\;
-\snddown{PREV[n][0]}\;
-\snddown{PREV[n][n+1]}\;
-\rcvup{PREV[0][0]}\;
-\rcvup{PREV[0][n+1]}\;
-\rcvdown{PREV[n+1][0]}\;
-\rcvdown{PREV[n+1][n+1]}\;
+    \SetKwFunction{sndup}{Send\_Up}
+    \SetKwFunction{snddown}{Send\_Down}
+    \SetKwFunction{sndleft}{Send\_Left}
+    \SetKwFunction{sndright}{Send\_Right}
+    \SetKwFunction{rcvup}{Receive\_Up}
+    \SetKwFunction{rcvdown}{Receive\_Down}
+    \SetKwFunction{rcvleft}{Receive\_Left}
+    \SetKwFunction{rcvright}{Receive\_Right}
+    \SetKwFunction{sndupr}{Send\_Up\_Row}
+    \SetKwFunction{snddownr}{Send\_Down\_Row}
+    \SetKwFunction{sndleftc}{Send\_Left\_Column}
+    \SetKwFunction{sndrightc}{Send\_Right\_Column}
+    \SetKwFunction{rcvupr}{Receive\_Up\_Row}
+    \SetKwFunction{rcvdownr}{Receive\_Down\_Row}
+    \SetKwFunction{rcvleftc}{Receive\_Left\_Column}
+    \SetKwFunction{rcvrightc}{Receive\_Right\_Column}
+    \DontPrintSemicolon
+    \LinesNotNumbered
+        \KwIn{PREV: array[0..n+1,0..n+1] of real}
+        \KwOut{NEXT: array[0..n+1,0..n+1] of real}
+            \tcc{Columns and row}
+                \sndleftc{1,PREV}\;
+                \sndrightc{n,PREV}\;
+                \sndupr{1,PREV}\;
+                \snddownr{n,PREV}\;
+                \rcvleftc{0,PREV}\;
+                \rcvrightc{n+1,PREV}\;
+                \rcvupr{0,PREV}\;
+                \rcvdownr{n+1,PREV}\;
+            \tcc{Corners}
+                \sndup{PREV[1][0]}\;
+                \sndup{PREV[1][n+1]}\;
+                \snddown{PREV[n][0]}\;
+                \snddown{PREV[n][n+1]}\;
+                \rcvup{PREV[0][0]}\;
+                \rcvup{PREV[0][n+1]}\;
+                \rcvdown{PREV[n+1][0]}\;
+                \rcvdown{PREV[n+1][n+1]}\;
+            \tcc{Computation of $\delta$}
+                \For{i=1 \textbf{to} n}{
+                    \For{j=1 \textbf{to} n}{
+                        $NEXT[i][j] = \delta(PREV,i,j)$\;
+                    }
+                }
 \caption{Stencil algorithm on a toric 2D grid\label{algoq3}}
-\tcc{Computation of $\delta$}
-\For{i=1 \textbf{to} n}{
-    \For{j=1 \textbf{to} n}{
-        $NEXT[i][j] = \delta(PREV,i,j)$\;
-    }
-}
 \end{algorithm}
 
 \underline{Time complexity}
@@ -383,7 +383,6 @@ Each step of the \texttt{for} loop of algorithm \ref{algoq5} is performed in the
 
 At the end of the previous steps, $\delta^{\dag^{t/2}}(E^{0,0})$ is computed and distributed. $\ddeltat(X)$ is computed in the same way than $\delta^{\dag^{t/2}}(E^{0,0})$ (each processor broadcasts the parts of $X^0$ and $\delta^{\dag^{t/2}}(E^{0,0})$ it stores, the computation is done using equation \ref{aveq}).
 
-
 \begin{prop}
  The time complexity is $T_t(t,N) = \cplx{\log(t) \cdot N^4 + N^6}$ (we do not count communication time).
 \end{prop}
@@ -456,8 +455,6 @@ For instance, the submatrix of $M$ stored in processor $p$ is:
   \end{array}
 \]
 
-%We use the extra functions defined into question 6. 
-
 All processors execute the following algorithm in parallel:
 
 \begin{algorithm}[H]
@@ -526,7 +523,6 @@ See the implementation in file \texttt{sparse.c}.
 
 Configurations with all their cells equal to a same constant $c$ are example of fixed points in $\RR^{\ZZ^d}$ and $\RR^{\text{\textlbrackdbl $N-1$ \textrbrackdbl}^d}$.
 
-
 %#############################################################################################################%
 %#############################################################################################################%
 
@@ -549,7 +545,7 @@ Configurations with all their cells equal to a same constant $c$ are example of 
 \end{ex}
 
 \begin{ex}
-  The following configuration $X^0$ is a fixed point with two constants (in blue):
+  The following configuration $X^0$ is a fixed point (whatever is the value of $p$) with two constants (in blue):
   
   \[\begin{array}{ | c | c | c | c | c |} \hline
     1 & 2 & 0 & -2 & -1\\ \hline
@@ -627,11 +623,11 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
   
   \textbf{First case} There exists a cell in $\xinf$ that contains a value strictly lower than $d$. We consider a cell $C$ of $\xinf$ containing the lowest value $e$ of $\xinf$ and such that one of its 4 neighbours is different from $e$ (at least one cell contains $d > e$, so $C$ exists). According to lemmas \ref{fix} and \ref{aver}, the value of $C$ must be the average of its 4 neighbours. Since $e$ is the lowest value of $\xinf$ and one of the neighbours of $C$ contains a value different from $e$ (so strictly greater than $e$), $C$ cannot contains the average of its 4 neighbours. \underline{It is absurd.}
 
-  \textbf{Second case} There exists a cell in $\xinf$ that contains a value strictly greater than $d$. As previously, we prove \underline{it is absurd}.
+  \textbf{Second case} There exists a cell in $\xinf$ that contains a value strictly greater than $d$. As previously, we prove that \underline{it is absurd}.
   
   Finally, it is absurd that one of the cells of $\xinf$ contains a value different from $d$. All the cells of $\xinf$ must be equal.
   
-  According to lemma \ref{conservative} the sum of all values does not change at any step of the computation. Thus, all the cells of $x^{\infty}$ must be equal to the average value of all the initial cells in $X^0$.  
+  According to lemma \ref{conservative} the sum of all values does not change at any step of the computation. Thus, all the cells of $\xinf$ must be equal to the average value of all the initial cells in $X^0$.  
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -705,7 +701,7 @@ Since $\xinf_{i,j} = (1-p) \cdot \xinf_{i,j} + p \cdot \frac{\xinf_{i+1,j} + \xi
 
 \subsection*{Question 13}
 
-See the implementation in file \texttt{average.c} (since the code is the same as in question 4).
+See the implementation in file \texttt{average.c} (our implementation of question also supports constants).
 
 
 %#############################################################################################################%

@@ -50,3 +50,14 @@ A script to run automatically `average` for several number of processes.
 ```
 ./check.sh <file>
 ```
+
+
+## Examples
+
+Several examples are provided.
+
+`examples/1` and `examples/2` are two basic automata.
+
+`examples/one_to_heat_them_all` is a single constant cell with content 1. It will heat the whole automaton over time.
+
+`examples/examples/thermal_reservoirs` show 4 thermal reservoirs: two with content 0, and two with content 1.

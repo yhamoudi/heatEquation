@@ -52,7 +52,8 @@ struct process {
 
 typedef struct process *Process ;
 
-/* Initialisation of the process with the given id, height, width and factor p (values for the global automata). */
+/* Compute all the necessary informations for the process. */
+/* Returns NULL if the process must be killed (it has nothing to compute. */
 Process initProcess(int myid, int nbproc, int width, int height, double p, int nbIter) ;
 
 /* Deletetion of the process. */

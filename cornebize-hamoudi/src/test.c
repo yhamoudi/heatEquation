@@ -75,6 +75,26 @@ void testDownEdgeProcess() {
                  3,2,3,6) ;
 }
 
+void testIdleProcess() {
+    nbtest ++ ;
+    Process proc = initProcess(4,5,11,8,0.1,42) ;
+    assert(!proc) ;
+}
+
+void testRightEdgeIdleProcess() {
+    nbtest ++ ;
+    checkProcess(3,5,11,8,0.1,42,\
+                 4,1,0,3,2,0,3,3,\
+                 2,8,9,0) ;
+}
+
+void testLeftEdgeIdleProcess() {
+    nbtest ++ ;
+    checkProcess(0,5,11,8,0.1,42,\
+                 4,1,0,0,3,1,0,0,\
+                 3,8,0,0) ;
+}
+
 void checkSetGet() {
     nbtest ++ ;
     Process proc = initProcess(5,12,11,8,0.1,10) ;
@@ -116,6 +136,9 @@ int main() {
     testRightEdgeProcess() ;
     testTopEdgeProcess() ;
     testDownEdgeProcess() ;
+    testIdleProcess() ;
+    testRightEdgeIdleProcess() ;
+    testLeftEdgeIdleProcess() ;
     checkSetGet() ;
     checkDelta() ;
     printf("Passed %d tests successfully.\n",nbtest);

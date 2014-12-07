@@ -10,7 +10,7 @@
 
 void compute(Process process, double **buff) {
     int i ;
-    MPI_Status stat;
+    MPI_Request send_requests[4] = {MPI_REQUEST_NULL,MPI_REQUEST_NULL,MPI_REQUEST_NULL,MPI_REQUEST_NULL} ;
     if(process->left != process->myid) { /* need to exchange messages */
         /* Copy of the columns 1 and n in the buffers. */
         for(i = 1 ; i <= process->automata->height ; i++) {
@@ -18,11 +18,11 @@ void compute(Process process, double **buff) {
             buff[1][i-1] = process->automata->cells[i][process->automata->width].content ;
         }
         /* Sending of the columns. */
-        MPI_Send(buff[0], process->automata->height, MPI_DOUBLE, process->left, TAG, MPI_COMM_WORLD);
-        MPI_Send(buff[1], process->automata->height, MPI_DOUBLE, process->right, TAG, MPI_COMM_WORLD);
+        MPI_Isend(buff[0], process->automata->height, MPI_DOUBLE, process->left, TAG, MPI_COMM_WORLD,&send_requests[0]);
+        MPI_Isend(buff[1], process->automata->height, MPI_DOUBLE, process->right, TAG, MPI_COMM_WORLD,&send_requests[1]);
         /* Receiving of the columns. */
-        MPI_Recv(buff[2], process->automata->height, MPI_DOUBLE, process->left, TAG, MPI_COMM_WORLD,&stat);
-        MPI_Recv(buff[3], process->automata->height, MPI_DOUBLE, process->right, TAG, MPI_COMM_WORLD,&stat);
+        MPI_Recv(buff[2], process->automata->height, MPI_DOUBLE, process->left, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        MPI_Recv(buff[3], process->automata->height, MPI_DOUBLE, process->right, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
         /* Copy of the buffers in the columns 0 and n+1. */
         for(i = 1 ; i <= process->automata->height ; i++) {
             process->automata->cells[i][0].content = buff[2][i-1] ;
@@ -43,11 +43,11 @@ void compute(Process process, double **buff) {
             buff[5][i-1] = process->automata->cells[process->automata->height][i].content ;
         }
         /* Sending of the columns. */
-        MPI_Send(buff[4], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD);
-        MPI_Send(buff[5], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD);
+        MPI_Isend(buff[4], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD,&send_requests[3]);
+        MPI_Isend(buff[5], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD,&send_requests[4]);
         /* Receiving of the columns. */
-        MPI_Recv(buff[6], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD,&stat);
-        MPI_Recv(buff[7], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD,&stat);
+        MPI_Recv(buff[6], process->automata->width, MPI_DOUBLE, process->up, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        MPI_Recv(buff[7], process->automata->width, MPI_DOUBLE, process->down, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
         /* Copy of the buffers in the columns 0 and n+1. */
         for(i = 1 ; i <= process->automata->height ; i++) {
             process->automata->cells[0][i].content = buff[6][i-1] ;
@@ -64,6 +64,8 @@ void compute(Process process, double **buff) {
     /* Computation of the transition function. */
     delta(process->automata) ;
     process->currentIter ++ ;
+    for(i = 0 ; i < 4 ; i++)
+        MPI_Wait(&send_requests[i], MPI_STATUS_IGNORE) ;
 }
 
 void io(Process process) {

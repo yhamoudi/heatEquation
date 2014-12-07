@@ -1,12 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <mpi.h>
 #include <assert.h>
 #include "automata.h"
-
-#define max(a,b) (a>b ? a : b)
-#define min(a,b) (a>b ? b : a)
 
 AverageAutomata initAutomata(int width, int height, int widthOffset, int heightOffset, double p) {
     int i,j ;

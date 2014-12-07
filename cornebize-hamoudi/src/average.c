@@ -85,7 +85,6 @@ void inputOutput(Process process) {
         buffcolumns[i] = (double*) malloc(max(process->automata->height,process->automata->width)*sizeof(double)) ;
         assert(buffcolumns[i]) ;
     }
-    MPI_Status stat;
     while(1) {
         if(process->myid == ONLY) {
             for(i = 0 ; i < 3 ; i++) {
@@ -116,7 +115,7 @@ void inputOutput(Process process) {
                 MPI_Send(&content, 1, MPI_DOUBLE, ONLY, TAG, MPI_COMM_WORLD);
             }
             if(isnan(content) && process->myid == ONLY) {
-                MPI_Recv(&content, 1, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD,&stat);
+                MPI_Recv(&content, 1, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
             }
             if(process->myid == ONLY)
                 printf("%lf\n",content) ;

@@ -4,7 +4,8 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
-#include "data.h"
+#include "automata.h"
+#include "process.h"
 
 #define ONLY 0
 #define TAG 0
